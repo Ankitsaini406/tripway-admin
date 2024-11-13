@@ -1,42 +1,119 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+
+  --orange-color: #E5A13E;
+  --mystic-blue: #091D36;
+  --venice-blue: #598EC2;
+  --danube-blue: #9BC1EE;
+  --gray-flash: #F0EFF5;
+
+  /* Festival Color */
+  --safforn-orange: #FF9933;
+  --indigo-blue: #3F51B5;
+  --turmeric-yellow: #FFC107;
+  --cream-white: #FFF8DC;
+
+  /* Royal Color */
+  --deep-maroon: #800000;
+  --golden--yellow: #FFD700;
+  --peacock-green: #228B22;
+  --sandy-beige: #F5DEB3;
+
+  /* Spiritual Color */
+  --vermilion-red: #FF4500;
+  --holy-ganges-blue: #4682B4;
+  --sandalwood-brown: #D2B48C;
+  --lotus-pink: #FFB6C1;
+
+  /* Nature-Inspired */
+  --forest-green: #006400;
+  --himalayan-sky-blue: #87CEEB;
+  --earthy-brown: #8B4513;
+  --mustard-yellow: #FFDB58;
+
+  /* Vibrant Markets */
+  --rani-pink: #E0115F;
+  --turquoise-blue: #40E0D0;
+  --sunset-orange: #FF6347;
+  --lvory-color: #FFFFF0;
+
+  --font-size: 0.390625vw;
+  --black-color: #1a1e18;
+  --white-color: #ffffff;
+  --grey-color: #f4f4f4;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@font-face {
+  font-family: 'Cina Geo';
+  src:
+    url('../fonts/CinaGEOTest-Regular-BF640158993b49e.otf') format('opentype'),
+    url('../fonts/CinaGEOTest-Medium-BF64015899849c0.otf') format('opentype'),
+    url('../fonts/CinaGEOTest-SemiBold-BF64015899cbc35.otf') format('opentype'),
+    url('../fonts/CinaGEOTest-Thin-BF6401589a20010.otf') format('opentype'),
+    url('../fonts/CinaGEOTest-Light-BF64015899c5366.otf') format('opentype'),
+    url('../fonts/CinaGEOTest-Black-BF6401589996142.otf') format('opentype'),
+    url('../fonts/CinaGEOTest-Bold-BF64015899f3908.otf') format('opentype'),
+    url('../fonts/CinaGEOTest-ExtraBold-BF640158980b295.otf') format('opentype'),
+    url('../fonts/CinaGEOTest-ExtraLight-BF6401589a08ee8.otf') format('opentype');
 }
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 
 html,
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0 auto;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: var(--white-color);
+  font-family: 'Cina Geo', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+a,
+li,
+ul,
+button,
+span {
   margin: 0;
-}
-
-a {
-  color: inherit;
+  padding: 0;
+  list-style: none;
   text-decoration: none;
+  font-weight: normal;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+button:focus,
+input:focus,
+select:focus {
+  cursor: pointer;
+  border: none;
+  outline: 1px solid var(--black-color);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+th {
+  background-color: #f2f2f2;
 }
