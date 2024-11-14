@@ -5,7 +5,7 @@ import { MdOutlineVisibility, MdOutlineVisibilityOff } from "react-icons/md";
 import style from './auth.module.css';
 import useAuth from "@/hook/useAuth";
 
-function AdminLoginPage() {
+function LoginPage() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -81,4 +81,4 @@ function AdminLoginPage() {
 
 }
 
-export default AdminLoginPage;
+export default LoginPage;

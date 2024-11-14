@@ -1,9 +1,22 @@
 import { AuthContextProvider } from "@/context/AuthContext";
+import RequireAuth from "@/utils/RequireAuth";
 
 function MyApp({ Component, pageProps }) {
+
+    const protectedRoutes = ['/'];
+    isProtected = protectedRoutes.includes(router.pathname);
+
     return (
         <AuthContextProvider>
-            <Component {...pageProps} />
+            {
+                !isProtected ? (
+                    <RequireAuth>
+                        <Component {...pageProps} />
+                    </RequireAuth>
+                ) : (
+                    <Component {...pageProps} />
+                )
+            }
         </AuthContextProvider>
     );
 }
