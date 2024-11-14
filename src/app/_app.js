@@ -1,4 +1,4 @@
-const { AuthContextProvider } = require("@/context/AuthContext");
+import { AuthContextProvider } from "@/context/AuthContext";
 
 function MyApp({ Component, pageProps }) {
     return (

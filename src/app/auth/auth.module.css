@@ -1,0 +1,97 @@
+
+.login-blur {
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.logincontainer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    width: 100%;
+    max-width: 400px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    backdrop-filter: blur(5px);
+}
+
+.logintitle {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.formgroup {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.formgroup label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.formgroup input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    outline: none;
+}
+
+.formgroup input:focus {
+    border-color: #2f80ed;
+}
+
+.errormessage {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.inputicon {
+    position: relative;
+}
+
+.passwordtogglebtn {
+    background: var(--white-color);
+    border: none;
+    cursor: pointer;
+    outline: 0px solid transparent;
+    position: absolute;
+    top: 8px;
+    right: 5px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loginbutton {
+    width: 100%;
+    padding: 10px;
+    background-color: #2f80ed;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.loginbutton:hover {
+    background-color: #1e5bb7;
+}
+
+.adminlogin {
+    background: var(--gray-flash);
+    position: relative;
+    height: 100vh;
+}
