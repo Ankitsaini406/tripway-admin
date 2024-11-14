@@ -7,7 +7,7 @@ const useEditData = (url, uid, makeRequest, token) => {
     const [clientToken, setClientToken] = useState(null);
 
     useEffect(() => {
-            setClientToken(token || localStorage.getItem("token"));
+        setClientToken(token || localStorage.getItem("token"));
     }, [token]);
 
     useEffect(() => {
@@ -55,7 +55,7 @@ const useEditData = (url, uid, makeRequest, token) => {
 
         try {
             const response = await makeRequest(
-                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/${url}/${uid}`,
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/${uid}`,
                 'PUT',
                 changes, // Only send the modified fields
                 clientToken

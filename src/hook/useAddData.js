@@ -27,7 +27,7 @@ export const useAddData = (token, makeRequest) => {
             // Step 1: Create agent in Firebase Authentication
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-            console.log('User created in Firebase Auth:', user);
+            console.log('Agent created in Firebase Auth:', user);
 
             // Step 2: Add the user’s UID to agent data and send it to backend
             const response = await makeRequest(

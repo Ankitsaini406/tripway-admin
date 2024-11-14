@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { MdOutlineVisibility, MdOutlineVisibilityOff } from "react-icons/md";
-import style from './auth.module.css';
+import style from '../../styles/auth.module.css';
 import useAuth from "@/hook/useAuth";
 
 function LoginPage() {

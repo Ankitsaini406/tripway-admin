@@ -117,3 +117,25 @@ th, td {
 th {
   background-color: #f2f2f2;
 }
+
+.tablebutton {
+  margin-right: 10px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.editbtn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+}
+
+.deletebtn {
+  background-color: #f44336;
+  color: white;
+  border: none;
+}
+
+.tablebutton:hover {
+  opacity: 0.8;
+}

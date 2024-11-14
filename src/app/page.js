@@ -3,14 +3,18 @@
 import { useState } from "react";
 import Dashboard from "@/pages/Dashborad";
 import style from './page.module.css';
+import AgentView from "@/pages/agentView";
+import UserView from "@/pages/userView";
 
 export default function Home() {
   const [activeButton, setActiveButton] = useState('Dashboard');
   return (
+  <>
     <div className={style.adminpage}>
       <Slidebar activeButton={activeButton} onButtonClick={setActiveButton} />
       <BodyContent activeButton={activeButton}/>
     </div>
+  </>
   );
 }
 
@@ -44,8 +48,8 @@ export function BodyContent({ activeButton }) {
     <div className={style.dashboardpage}>
       <h1>{activeButton}</h1>
       {activeButton === "Dashboard" && <Dashboard />}
-      {/* {activeButton === "Agents" && <AgentView />} */}
-      {/* {activeButton === "Users" && <UserView />} */}
+      {activeButton === "Agents" && <AgentView />}
+      {activeButton === "Users" && <UserView />}
       {/* {activeButton === "Tour" && <TourView />} */}
       {activeButton === "Group Tours" && <p>Group tours management.</p>}
       {activeButton === "Slider" && <p>Edit your sliders here.</p>}
