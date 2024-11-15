@@ -3,7 +3,7 @@ import useAuth from "@/hook/useAuth";
 import useAuthorizedRequest from "@/hook/useAuthorizedRequest";
 import useEditData from "@/hook/useEditData";
 import style from '../styles/auth.module.css';
-
+import style2 from '../styles/modal.module.css';
 
 function EditPersonData({ person, onCancel, url }) {
 
@@ -81,9 +81,9 @@ function EditPersonData({ person, onCancel, url }) {
             </div>
             {loading && <p>Saving changes...</p>}
             {error && <p className={style.error}>Error: {error}</p>}
-            <div className={style.savecancle}>
-                <button className={`${style.savecanclebtn} ${style.savebtn}`} type="submit">Save</button>
-                <button className={`${style.savecanclebtn} ${style.canclebtn}`} type="button" onClick={onCancel}>
+            <div className={style2.savecancle}>
+                <button className={`${style2.savecanclebtn} ${style2.savebtn}`} type="submit">Save</button>
+                <button className={`${style2.savecanclebtn} ${style2.canclebtn}`} type="button" onClick={onCancel}>
                     Cancel
                 </button>
             </div>

@@ -6,6 +6,7 @@ import { useDeleteData } from "@/hook/useDeleteData";
 import Modal from "@/utils/Modal";
 import EditPersonData from "@/components/EditPerson";
 import CreatePerson from "@/components/CreatePerson";
+import useDeleteAgent from "@/hook/useDelete";
 
 function AgentView() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,6 +17,7 @@ function AgentView() {
     const { makeRequest } = useAuthorizedRequest();
     const { persons } = useViewData(token, makeRequest, 'agents/get', refreshKey);
     const { deleteData, loading: deleteLoading, error: deleteError } = useDeleteData(token, makeRequest);
+    const { deleteAgent, isDeleting, response, error } = useDeleteAgent();
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -38,7 +40,8 @@ function AgentView() {
 
     const handleDeleteAgent = async (uid) => {
         try {
-            await deleteData('delete-agent', uid);
+            // await deleteData(uid);
+            await deleteAgent(uid);
             setRefreshKey((prevKey) => prevKey + 1);
         } catch (error) {
             console.error("Error deleting agent:", error);

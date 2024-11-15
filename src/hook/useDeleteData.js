@@ -9,7 +9,7 @@ export const useDeleteData = (token, makeRequest) => {
             setClientToken(token || localStorage.getItem('token'));
     }, [token]);
 
-    const deleteData = async (url, uid) => {
+    const deleteData = async (uid) => {
         setLoading(true);
         setError(null);
 
@@ -23,7 +23,7 @@ export const useDeleteData = (token, makeRequest) => {
         try {
             // Call the backend API to delete the agent
             await makeRequest(
-                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/${url}/${uid}`, // Use environment variable for base URL
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/${uid}`, // Use environment variable for base URL
                 'DELETE',
                 null,
                 clientToken
