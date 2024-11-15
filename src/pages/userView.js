@@ -9,7 +9,7 @@ function UserView() {
     const [refreshKey, setRefreshKey] = useState(0);
     const { token } = useAuth();
     const { makeRequest } = useAuthorizedRequest();
-    const { persons } = useViewData(token, makeRequest, 'users/get', refreshKey);
+    const { data } = useViewData(token, makeRequest, 'users/get', refreshKey);
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -19,42 +19,25 @@ function UserView() {
         setIsModalOpen(false);
     };
 
-    // if (error) return <p>Error: {error.message}</p>;
-
     return (
         <>
             <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
             </Modal>
-            {persons ? (
+            {data ? (
                 <table>
                     <thead>
                         <tr>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Phone</th>
-                            {/* <th>Actions</th> */}
                         </tr>
                     </thead>
                     <tbody>
-                        {Object.keys(persons).map((uid) => (
+                        {Object.keys(data).map((uid) => (
                             <tr key={uid}>
-                                <td>{persons[uid].name}</td>
-                                <td>{persons[uid].email}</td>
-                                <td>{persons[uid].phoneNumber}</td>
-                                {/* <td>
-                                <button
-                                        onClick={() => handleOpenEditModal(uid)}
-                                        className={`editbtn tablebutton`}
-                                    >
-                                        Edit
-                                    </button>
-                                    <button
-                                        onClick={() => handleDeleteUser(uid)}
-                                        className={`deletebtn tablebutton`}
-                                    >
-                                        Delete
-                                    </button>
-                                </td> */}
+                                <td>{data[uid].name}</td>
+                                <td>{data[uid].email}</td>
+                                <td>{data[uid].phoneNumber}</td>
                             </tr>
                         ))}
                     </tbody>

@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 
 export const useViewData = (token, makeRequest, url, refreshKey) => {
-    const [persons, setPersons] = useState(null);
+    const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         // Reset state for new requests
-        setPersons(null);
+        setData(null);
         setLoading(true);
 
         const fetchData = async () => {
@@ -35,7 +35,7 @@ export const useViewData = (token, makeRequest, url, refreshKey) => {
                 }
 
                 const data = await response.json();
-                setPersons(data);
+                setData(data);
             } catch (error) {
                 console.error('Error making authorized request:', error);
                 setError(error.message || 'Error fetching data');
@@ -47,5 +47,5 @@ export const useViewData = (token, makeRequest, url, refreshKey) => {
         fetchData();
     }, [token, makeRequest, url, refreshKey]);
 
-    return { persons, loading, error };
+    return { data, loading, error };
 };

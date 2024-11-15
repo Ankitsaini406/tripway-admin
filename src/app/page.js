@@ -5,6 +5,7 @@ import Dashboard from "@/pages/Dashborad";
 import style from './page.module.css';
 import AgentView from "@/pages/agentView";
 import UserView from "@/pages/userView";
+import TourView from "@/pages/tourView";
 
 export default function Home() {
   const [activeButton, setActiveButton] = useState('Dashboard');
@@ -50,7 +51,7 @@ export function BodyContent({ activeButton }) {
       {activeButton === "Dashboard" && <Dashboard />}
       {activeButton === "Agents" && <AgentView />}
       {activeButton === "Users" && <UserView />}
-      {/* {activeButton === "Tour" && <TourView />} */}
+      {activeButton === "Tour" && <TourView />}
       {activeButton === "Group Tours" && <p>Group tours management.</p>}
       {activeButton === "Slider" && <p>Edit your sliders here.</p>}
       {activeButton === "Logout" && ""}

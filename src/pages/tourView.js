@@ -5,17 +5,17 @@ import { useViewData } from "@/hook/useViewData";
 import { useDeleteData } from "@/hook/useDeleteData";
 import Modal from "@/utils/Modal";
 import EditPersonData from "@/components/EditPerson";
-import CreatePerson from "@/components/CreatePerson";
 import useDeleteAgent from "@/hook/useDelete";
+import CreateTour from "@/components/CreateTours";
 
-function AgentView() {
+function TourView() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingAgent, setEditingAgent] = useState(null);
     const [refreshKey, setRefreshKey] = useState(0);
     const { token } = useAuth();
     const { makeRequest } = useAuthorizedRequest();
-    const { data } = useViewData(token, makeRequest, 'agents/get', refreshKey);
+    const { data } = useViewData(token, makeRequest, 'tour/get', refreshKey);
     const { deleteData, loading: deleteLoading, error: deleteError } = useDeleteData(token, makeRequest);
     const { deleteAgent, isDeleting, response, error } = useDeleteAgent();
 
@@ -53,16 +53,16 @@ function AgentView() {
 
     return (
         <>
-            <button onClick={handleOpenModal}>Create Agent</button>
+            <button onClick={handleOpenModal}>Create Tour</button>
             <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-                <CreatePerson title={'Agent'} url={'agents/add-agent'} />
+                <CreateTour title={'Tour'} url={'tour/add-tour'} />
             </Modal>
             <Modal isOpen={isEditModalOpen} onClose={handleCloseEditModal}>
                 {editingAgent && (
                     <EditPersonData
                     person={editingAgent}
                         onCancel={handleCloseEditModal}
-                        url={'agents'}
+                        url={'tour'}
                     />
                 )}
             </Modal>
@@ -71,18 +71,22 @@ function AgentView() {
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Actions</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Image</th>
+                            <th>Descrption</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {Object.keys(data).map((uid) => (
                             <tr key={uid}>
                                 <td>{data[uid].name}</td>
-                                <td>{data[uid].email}</td>
-                                <td>{data[uid].phoneNumber}</td>
-                                <td>
+                                <td>{data[uid].category}</td>
+                                <td>{data[uid].price}</td>
+                                <td>{data[uid].imageUrl}</td>
+                                <td>{data[uid].description}</td>
+                                <td style={{ display: 'flex'}}>
                                 <button
                                         onClick={() => handleOpenEditModal(uid)}
                                         className={`editbtn tablebutton`}
@@ -101,10 +105,10 @@ function AgentView() {
                     </tbody>
                 </table>
             ) : (
-                <p>{deleteError}</p>
+                <p>Loading ...</p>
             )}
         </>
     );
 }
 
-export default AgentView;
+export default TourView;

@@ -7,8 +7,8 @@ function Dashboard() {
     const { token } = useAuth();
     const { makeRequest } = useAuthorizedRequest();
     const [refreshKey, setRefreshKey] = useState(0);
-    const { persons: agents, loading: loadingAgents, error: errorAgents } = useViewData(token, makeRequest, 'agents/get', refreshKey);
-    const { persons: users, loading: loadingUsers, error: errorUsers } = useViewData(token, makeRequest, 'users/get', refreshKey);
+    const { data: agents, loading: loadingAgents, error: errorAgents } = useViewData(token, makeRequest, 'agents/get', refreshKey);
+    const { data: users, loading: loadingUsers, error: errorUsers } = useViewData(token, makeRequest, 'users/get', refreshKey);
 
     return (
         <>
