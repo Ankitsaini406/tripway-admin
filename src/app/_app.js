@@ -1,7 +1,11 @@
+import { ToastContainer } from "react-toastify";
 
 function MyApp({ Component, pageProps }) {
     return (
-            <Component {...pageProps} />
+        <>
+        <Component {...pageProps} />
+        <ToastContainer position="top-right" autoClose={5000} hideProgressBar={true} closeOnClick />
+        </>
     );
 }
 

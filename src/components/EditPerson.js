@@ -2,93 +2,66 @@ import React, { useState, useEffect } from "react";
 import useAuth from "@/hook/useAuth";
 import useAuthorizedRequest from "@/hook/useAuthorizedRequest";
 import useEditData from "@/hook/useEditData";
-import style from '../styles/auth.module.css';
-import style2 from '../styles/modal.module.css';
+import style from "../styles/auth.module.css";
+import modalStyle from "../styles/modal.module.css";
 
 function EditPersonData({ person, onCancel, url }) {
-
     const { token } = useAuth();
     const { makeRequest } = useAuthorizedRequest();
     const { editData, loading, error } = useEditData(`${url}`, person.uid, makeRequest, token);
-    const [formData, setFormData] = useState({
-        name: person.name,
-        email: person.email,
-        phoneNumber: person.phoneNumber,
-    });
-
+    const [formData, setFormData] = useState({ name: "", email: "", phoneNumber: "" });
 
     useEffect(() => {
-        setFormData({
-            name: person.name,
-            email: person.email,
-            phoneNumber: person.phoneNumber,
-        });
+        if (person) {
+            setFormData({ name: person.name, email: person.email, phoneNumber: person.phoneNumber });
+        }
     }, [person]);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
+    const handleChange = ({ target: { name, value } }) => {
+        setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
-            await editData(formData, `update-${url}`); // Call the editAgent function from the hook
-            onCancel(); // Close the modal or return to previous screen
+            await editData(formData);
+            onCancel();
         } catch (err) {
-            console.error(`Error editing ${url}:`, err.message);
+            console.error(`Error editing ${url}:`, err);
         }
     };
 
     return (
         <form onSubmit={handleSubmit}>
-            <div className={style.formgroup}>
-                <label>Name</label>
-                <input
-                    className={style.authinput}
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                />
-            </div>
-            <div className={style.formgroup}>
-                <label>Email</label>
-                <input
-                    className={style.authinput}
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                />
-            </div>
-            <div className={style.formgroup}>
-                <label>Phone Number</label>
-                <input
-                    className={style.authinput}
-                    type="text"
-                    name="phoneNumber"
-                    value={formData.phoneNumber}
-                    onChange={handleChange}
-                    required
-                />
-            </div>
+            {["name", "email", "phoneNumber"].map((field) => (
+                <div className={style.formgroup} key={field}>
+                    <label>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+                    <input
+                        className={style.authinput}
+                        type={field === "email" ? "email" : "text"}
+                        name={field}
+                        value={formData[field]}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+            ))}
             {loading && <p>Saving changes...</p>}
             {error && <p className={style.error}>Error: {error}</p>}
-            <div className={style2.savecancle}>
-                <button className={`${style2.savecanclebtn} ${style2.savebtn}`} type="submit">Save</button>
-                <button className={`${style2.savecanclebtn} ${style2.canclebtn}`} type="button" onClick={onCancel}>
+            <div className={modalStyle.savecancle}>
+                <button className={`${modalStyle.savecanclebtn} ${modalStyle.savebtn}`} type="submit">
+                    Save
+                </button>
+                <button
+                    className={`${modalStyle.savecanclebtn} ${modalStyle.canclebtn}`}
+                    type="button"
+                    onClick={onCancel}
+                >
                     Cancel
                 </button>
             </div>
         </form>
     );
-};
+}
 
 export default EditPersonData;

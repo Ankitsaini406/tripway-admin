@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { getCookie } from "cookies-next";
 
 const useEditData = (url, uid, makeRequest, token) => {
     const [person, setPerson] = useState(null);
@@ -7,7 +8,7 @@ const useEditData = (url, uid, makeRequest, token) => {
     const [clientToken, setClientToken] = useState(null);
 
     useEffect(() => {
-        setClientToken(token || localStorage.getItem("token"));
+        setClientToken(token || getCookie("token"));
     }, [token]);
 
     useEffect(() => {
@@ -17,7 +18,7 @@ const useEditData = (url, uid, makeRequest, token) => {
             setLoading(true);
             try {
                 const response = await makeRequest(
-                    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/${url}/${uid}`,
+                    `http://localhost:3000/api/${url}/${uid}`,
                     'GET',
                     null,
                     clientToken
@@ -35,6 +36,7 @@ const useEditData = (url, uid, makeRequest, token) => {
     }, [url, uid, clientToken, makeRequest]);
 
     const editData = async (updatedData) => {
+        console.log('This is edit uid : ', uid);
         setLoading(true);
 
         // Create a payload with only the modified fields
@@ -55,7 +57,7 @@ const useEditData = (url, uid, makeRequest, token) => {
 
         try {
             const response = await makeRequest(
-                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/${uid}`,
+                `http://localhost:3000/api/${url}/${uid}`,
                 'PUT',
                 changes, // Only send the modified fields
                 clientToken

@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import useAuth from "@/hook/useAuth";
 import useAuthorizedRequest from "@/hook/useAuthorizedRequest";
 import { useViewData } from "@/hook/useViewData";
-import { useDeleteData } from "@/hook/useDeleteData";
 import Modal from "@/utils/Modal";
 import EditPersonData from "@/components/EditPerson";
 import CreatePerson from "@/components/CreatePerson";
 import useDeleteAgent from "@/hook/useDelete";
+import { toast } from "react-toastify";
 
 function AgentView() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,8 +16,7 @@ function AgentView() {
     const { token } = useAuth();
     const { makeRequest } = useAuthorizedRequest();
     const { data } = useViewData(token, makeRequest, 'agents/get', refreshKey);
-    const { deleteData, loading: deleteLoading, error: deleteError } = useDeleteData(token, makeRequest);
-    const { deleteAgent, isDeleting, response, error } = useDeleteAgent();
+    const { deleteData, isDeleting, response, error } = useDeleteAgent();
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -41,14 +40,15 @@ function AgentView() {
     const handleDeleteAgent = async (uid) => {
         try {
             // await deleteData(uid);
-            await deleteAgent(uid);
+            await deleteData(`/agents/${uid}`);
+            toast.info(response);
             setRefreshKey((prevKey) => prevKey + 1);
         } catch (error) {
             console.error("Error deleting agent:", error);
         }
     };
 
-    if (deleteLoading) return <p>Loading...</p>;
+    if (isDeleting) return <p>Loading...</p>;
     // if (error) return <p>Error: {error.message}</p>;
 
     return (
@@ -66,7 +66,7 @@ function AgentView() {
                     />
                 )}
             </Modal>
-            {data && !deleteError ? (
+            {data && !error ? (
                 <table>
                     <thead>
                         <tr>
@@ -101,7 +101,7 @@ function AgentView() {
                     </tbody>
                 </table>
             ) : (
-                <p>{deleteError}</p>
+                <p>{error}</p>
             )}
         </>
     );

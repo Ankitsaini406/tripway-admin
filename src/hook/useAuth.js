@@ -1,7 +1,8 @@
-import { useState, useContext, useCallback, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase/firebaseConfig";
 import { useRouter } from "next/navigation";
+import { setCookie, getCookie } from "cookies-next"; // Import cookies-next
 
 function useAuth() {
     const [token, setToken] = useState(null);
@@ -9,7 +10,9 @@ function useAuth() {
     const router = useRouter();
 
     useEffect(() => {
-            setToken(localStorage.getItem("token"));
+        // Get the token from cookies on initial load
+        const tokenFromCookie = getCookie("token");
+        setToken(tokenFromCookie);
     }, []);
 
     const login = useCallback(async (email, password) => {
@@ -26,7 +29,15 @@ function useAuth() {
             console.log(fetchedToken);
 
             setToken(fetchedToken);
-                localStorage.setItem("token", fetchedToken);
+
+            // Set the token in cookies using cookies-next
+            setCookie("token", fetchedToken, {
+                maxAge: 60 * 60 * 24,  // Token expires in 1 day
+                secure: true,  // Only set cookie over HTTPS
+                sameSite: "Strict",  // Prevent CSRF attacks
+                path: '/',  // Set the cookie across all paths
+            });
+
             router.push("/");
 
         } catch (err) {

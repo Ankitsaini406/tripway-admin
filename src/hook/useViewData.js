@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getCookie } from 'cookies-next'; // Import cookies-next
 
 export const useViewData = (token, makeRequest, url, refreshKey) => {
     const [data, setData] = useState(null);
@@ -11,8 +12,8 @@ export const useViewData = (token, makeRequest, url, refreshKey) => {
         setLoading(true);
 
         const fetchData = async () => {
-            // Get the token, either passed in or from localStorage (on the client side)
-            const storedToken = token || localStorage.getItem('token');
+            // Get the token, either passed in as a prop or from cookies (on the client side)
+            const storedToken = token || getCookie('token');
             if (!storedToken) {
                 console.log("Token is null:", token);
                 setError("Token is missing.");
@@ -45,7 +46,7 @@ export const useViewData = (token, makeRequest, url, refreshKey) => {
         };
 
         fetchData();
-    }, [token, makeRequest, url, refreshKey]);
+    }, [token, makeRequest, url, refreshKey]); // Depend on token, makeRequest, url, and refreshKey
 
     return { data, loading, error };
 };
