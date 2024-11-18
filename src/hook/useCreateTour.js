@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const useCreateTour = () => {
+const useCreateTour = (url) => {
     const [isUploading, setIsUploading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
@@ -21,7 +21,7 @@ const useCreateTour = () => {
             };
 
             // Step 1: Submit the tour data (excluding image) to your backend to save in the database
-            const response = await fetch(`http://localhost:3000/api/tour/add-tour`, {
+            const response = await fetch(`http://localhost:3000/api/${url}`, {
                 method: 'POST',
                 body: JSON.stringify(tourDataToSave),
                 headers: {

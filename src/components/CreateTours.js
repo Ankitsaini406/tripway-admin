@@ -3,7 +3,7 @@ import style from '../styles/auth.module.css';
 import useCreateTour from "@/hook/useCreateTour";  // Import the custom hook
 import Image from "next/image";
 
-function CreateTour({ title }) {
+function CreateTour({ title, url }) {
     const [formData, setFormData] = useState({
         name: '',
         price: '',
@@ -12,7 +12,7 @@ function CreateTour({ title }) {
         img: null,
     });
     const [imgPreview, setImgPreview] = useState('');
-    const { createTour, isUploading, error, success } = useCreateTour(); // Use the custom hook
+    const { createTour, isUploading, error, success } = useCreateTour(url); // Use the custom hook
 
     const handleChange = (e) => {
         const { name, value } = e.target;

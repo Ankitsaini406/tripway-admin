@@ -6,6 +6,7 @@ import style from './page.module.css';
 import AgentView from "@/pages/agentView";
 import UserView from "@/pages/userView";
 import TourView from "@/pages/tourView";
+import CabsView from "@/pages/cabsView";
 
 export default function Home() {
   const [activeButton, setActiveButton] = useState('Dashboard');
@@ -24,7 +25,7 @@ export function Slidebar({ activeButton, onButtonClick }) {
   return (
     <nav className={`${style.sidebar}`}>
       <ul className={`${style.silderlist}`}>
-        {["Dashboard", "Agents", "Users", "Tour", "Group Tours", "Slider"].map((button) => (
+        {["Dashboard", "Agents", "Users", "Tour", "Cabs", "Slider"].map((button) => (
           <li
             key={button}
             onClick={() => onButtonClick(button)}
@@ -52,7 +53,7 @@ export function BodyContent({ activeButton }) {
       {activeButton === "Agents" && <AgentView />}
       {activeButton === "Users" && <UserView />}
       {activeButton === "Tour" && <TourView />}
-      {activeButton === "Group Tours" && <p>Group tours management.</p>}
+      {activeButton === "Cabs" && <CabsView />}
       {activeButton === "Slider" && <p>Edit your sliders here.</p>}
       {activeButton === "Logout" && ""}
     </div>

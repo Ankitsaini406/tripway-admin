@@ -8,7 +8,7 @@ export async function POST(req) {
         const { name, price, category, description } = await req.json();
 
         // Get reference to the Firestore collection 'tours'
-        const tourRef = collection(firestore, "tours");
+        const tourRef = collection(firestore, "group-tours");
 
         // Prepare tour data
         const tourData = {

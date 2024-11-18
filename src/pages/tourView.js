@@ -13,9 +13,12 @@ function TourView() {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingAgent, setEditingAgent] = useState(null);
     const [refreshKey, setRefreshKey] = useState(0);
+    const [selectedSection, setSelectedSection] = useState("tour"); // Track which section is selected (tour or group-tour)
+
     const { token } = useAuth();
     const { makeRequest } = useAuthorizedRequest();
-    const { data } = useViewData(token, makeRequest, 'tour/get', refreshKey);
+
+    const { data } = useViewData(token, makeRequest, selectedSection === "tour" ? 'tour/get' : 'group-tour/get', refreshKey);
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -43,27 +46,46 @@ function TourView() {
             toast.success("Tour is deleted");
         } catch (error) {
             console.error("Error deleting agent:", error);
-            toast.success(error);
+            toast.error("Error deleting the tour");
         }
     };
 
-    // if (error) return <p>Error: {error.message}</p>;
+    // Switch between Tour and Group Tour sections
+    const handleSectionChange = (section) => {
+        setSelectedSection(section);
+        setRefreshKey((prevKey) => prevKey + 1); // Refresh data when switching sections
+    };
 
     return (
         <>
-            <button onClick={handleOpenModal}>Create Tour</button>
+            {/* Section selection buttons */}
+            <div style={{ marginBottom: "20px" }}>
+                <button onClick={() => handleSectionChange("tour")} style={{ marginRight: "10px" }}>
+                    Tour
+                </button>
+                <button onClick={() => handleSectionChange("group-tour")}>
+                    Group Tour
+                </button>
+            </div>
+
+            {/* Create Tour Modal */}
+            <button onClick={handleOpenModal}>Create {selectedSection === "tour" ? "Tour" : "Group Tour"}</button>
             <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-                <CreateTour title={'Tour'} url={'tour/add-tour'} />
+                <CreateTour title={selectedSection === "tour" ? 'Tour' : 'Group Tour'} url={selectedSection === "tour" ? 'tour/add-tour' : 'group-tour/add-group-tour'} />
             </Modal>
+
+            {/* Edit Tour Modal */}
             <Modal isOpen={isEditModalOpen} onClose={handleCloseEditModal}>
                 {editingAgent && (
                     <EditPersonData
-                    person={editingAgent}
+                        person={editingAgent}
                         onCancel={handleCloseEditModal}
-                        url={'tour'}
+                        url={selectedSection === "tour" ? 'tour' : 'group-tour'}
                     />
                 )}
             </Modal>
+
+            {/* Data Display */}
             {data ? (
                 <table>
                     <thead>
@@ -72,7 +94,7 @@ function TourView() {
                             <th>Category</th>
                             <th>Price</th>
                             <th>Image</th>
-                            <th>Descrption</th>
+                            <th>Description</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -82,11 +104,10 @@ function TourView() {
                                 <td>{data[uid].name}</td>
                                 <td>{data[uid].category}</td>
                                 <td>{data[uid].price}</td>
-                                <td>{data[uid].imageUrl}</td>
-                                <td><img width={200} height={200} src={'https://tripwayholidays.in/tour-image/csgoskins-avatar.jpg'} /></td>
+                                <td>{data[uid].imageUrl}<img width={200} height={200} src={data[uid].imageUrl || 'https://tripwayholidays.in/tour-image/csgoskins-avatar.jpg'} alt={data[uid].name} /></td>
                                 <td>{data[uid].description}</td>
-                                <td style={{ display: 'flex'}}>
-                                <button
+                                <td style={{ display: 'flex' }}>
+                                    <button
                                         onClick={() => handleOpenEditModal(uid)}
                                         className={`editbtn tablebutton`}
                                     >
