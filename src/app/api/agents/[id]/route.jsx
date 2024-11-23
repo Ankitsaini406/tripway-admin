@@ -34,14 +34,6 @@ export async function PUT(req, { params }) {
         return NextResponse.json({ message: 'Invalid JSON' }, { status: 400 });
     }
 
-    // Validate required fields
-    if (!data.phoneNumber || !data.email) {
-        return NextResponse.json(
-            { message: 'phoneNumber and email are required' },
-            { status: 400 }
-        );
-    }
-
     try {
         const agentRef = ref(database, `agents/${id}`);
         await update(agentRef, data);

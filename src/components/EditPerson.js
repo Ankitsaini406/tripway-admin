@@ -7,26 +7,37 @@ import modalStyle from "../styles/modal.module.css";
 
 function EditPersonData({ person, onCancel, url }) {
     const { token } = useAuth();
+    const { editData, loading, error } = useEditData(`${url}`, person.uid, token);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const { editData, loading, error } = useEditData(`${url}`, person.uid, token);
-    const [formData, setFormData] = useState({ 
-        name: "", 
-        email: "", 
-        phoneNumber: "", 
-        password: "", 
-        verifyPassword: "" 
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        phoneNumber: "",
+        password: "",
+        verifyPassword: ""
+    });
+
+    const [oldData, setOldData] = useState({
+        name: "",
+        email: "",
+        phoneNumber: "",
+        password: "",
+        verifyPassword: "",
     });
 
     useEffect(() => {
         if (person) {
-            setFormData({ 
-                name: person.name, 
-                email: person.email, 
+            const initialData = {
+                name: person.name,
+                email: person.email,
                 phoneNumber: person.phoneNumber,
                 password: person.password || "",
                 verifyPassword: person.verifyPassword || "",
-            });
+            };
+
+            setFormData(initialData);
+            setOldData(initialData);
         }
     }, [person]);
 
@@ -45,14 +56,24 @@ function EditPersonData({ person, onCancel, url }) {
 
         const updatedData = { ...formData };
 
+        // Only update fields that have changed
+        const dataToUpdate = {};
+
+        // Check if the fields are updated, if so, add to dataToUpdate
+        Object.keys(updatedData).forEach((key) => {
+            if (updatedData[key] !== oldData[key]) {
+                dataToUpdate[key] = updatedData[key];
+            }
+        });
+
         // Only include password fields if they are not empty
-        if (!formData.password) {
-            delete updatedData.password;
-            delete updatedData.verifyPassword;
+        if (!updatedData.password) {
+            delete dataToUpdate.password;
+            delete dataToUpdate.verifyPassword;
         }
 
         try {
-            await editData(updatedData); // Send updated data to the backend
+            await editData(dataToUpdate); // Send updated data to the backend
             onCancel();
         } catch (err) {
             console.error(`Error editing ${url}:`, err);

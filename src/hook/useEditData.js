@@ -49,7 +49,7 @@ const useEditData = (url, uid, token) => {
         fetchData();
     }, [url, uid, token]);
 
-    const editData = async (updatedData) => {
+    const editData = async (dataToUpdate) => {
         if (!person) {
             console.error("No person data to update.");
             setError("No person data to update.");
@@ -58,17 +58,9 @@ const useEditData = (url, uid, token) => {
     
         setLoading(true);
     
-        // Validate required fields
-        if (!updatedData.phoneNumber || !updatedData.email) {
-            console.error("Missing required fields: phoneNumber or email", updatedData.email, updatedData.phoneNumber);
-            setError("Phone number and email are required.");
-            setLoading(false);
-            return;
-        }
-    
-        const changes = Object.keys(updatedData).reduce((acc, key) => {
-            if (updatedData[key] !== person[key]) {
-                acc[key] = updatedData[key];
+        const changes = Object.keys(dataToUpdate).reduce((acc, key) => {
+            if (dataToUpdate[key] !== person[key]) {
+                acc[key] = dataToUpdate[key];
             }
             return acc;
         }, {});
