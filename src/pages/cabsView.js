@@ -3,9 +3,9 @@ import useCabsData from "@/hook/useCabData";
 import { toast } from "react-toastify";
 
 const sectionHeaders = {
-    "one-way": ["Booking From", "Email", "From", "To", "Passenger", "Phone Number", "Select Car", "Start Date", "Time", "Offer From"],
-    "round-trip": ["From", "Destination", "Email", "Passenger", "Phone Number", "Select Car", "Start Date", "Time"],
-    "multi-city": ["From", "Destination", "Email", "Passenger", "Phone Number", "Select Car", "Start Date", "Time"],
+    "one-way": ["From", "To", "Email", "Passenger", "Phone Number", "Car", "Start Date", "Time", "Offer From"],
+    "round-trip": ["From", "Destination", "Email", "Passenger", "Phone Number", "Car", "Start Date", "Time"],
+    "multi-city": ["From", "Destination", "Email", "Passenger", "Phone Number", "Car", "Start Date", "Time"],
 };
 
 function CabsView() {
@@ -14,14 +14,26 @@ function CabsView() {
 
     const { data, loading, error } = useCabsData(selectedSection, refreshKey);
 
-    const handleDeleteAgent = async (uid) => {
-        try {
-            // await deleteData(uid);
-            toast.success("Cab trip deleted");
-            setRefreshKey((key) => key + 1);
-        } catch {
-            toast.error("Error deleting the cab trip");
+    const formatDate = (timestamp) => {
+        if (!timestamp) return "N/A";
+        if (timestamp.seconds) {
+            const date = new Date(timestamp.seconds * 1000);
+            const day = String(date.getDate()).padStart(2, "0");
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const month = monthNames[date.getMonth()];
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
         }
+        return timestamp;
+    };
+
+    const formTime = (time) => {
+        if (!time) return "N/A";
+    
+        const [hour, minute] = time.split(":").map(Number);
+        let ampm = hour >= 12 ? "PM" : "AM";
+        let adjustedHour = hour % 12 || 12;
+        return `${String(adjustedHour).padStart(2, "0")}:${minute} ${ampm}`;
     };
 
     const renderRow = (uid) => {
@@ -29,19 +41,46 @@ function CabsView() {
         const destination = Array.isArray(cab?.destination) ? cab.destination.join(", ") : cab?.destination || "N/A";
 
         const sectionData = {
-            "one-way": [cab.bookingFrom, cab.email, cab.from, cab.to, cab.passenger, cab.phoneNumber, cab.selectCar, cab.startDate, cab.time, cab.offerFrom],
-            "round-trip": [cab.from, cab.destination, cab.email, cab.passenger, cab.phoneNumber, cab.selectCar, cab.startDate, cab.time],
-            "multi-city": [cab.from, destination, cab.email, cab.passenger, cab.phoneNumber, cab.selectCar, cab.startDate, cab.time],
+            "one-way": [
+                cab.from,
+                cab.to,
+                cab.email,
+                cab.passenger,
+                cab.phoneNumber,
+                cab.carOption,
+                formatDate(cab.startDate), // Format the timestamp
+                formTime(cab.time),
+                cab.offerFrom,
+            ],
+            "round-trip": [
+                cab.from,
+                destination,
+                cab.email,
+                cab.passenger,
+                cab.phoneNumber,
+                cab.carOption,
+                formatDate(cab.startDate), // Format the timestamp
+                formTime(cab.time),
+            ],
+            "multi-city": [
+                cab.from,
+                destination,
+                cab.email,
+                cab.passenger,
+                cab.phoneNumber,
+                cab.carOption,
+                formatDate(cab.startDate), // Format the timestamp
+                formTime(cab.time),
+            ],
         };
 
         return (
             <tr key={uid}>
                 {sectionData[selectedSection].map((value, index) => (
-                    <td key={index}>{value}</td>
+                    <td key={index}>{typeof value === "object" ? JSON.stringify(value) : value}</td>
                 ))}
                 <td style={{ display: "flex" }}>
-                    <button onClick={() => console.log("Edit", uid)} className="editbtn tablebutton">Edit</button>
-                    <button onClick={() => handleDeleteAgent(uid)} className="deletebtn tablebutton">Delete</button>
+                    <button onClick={() => console.log("Edit", uid)} className="editbtn tablebutton">Panding</button>
                 </td>
             </tr>
         );
@@ -52,7 +91,11 @@ function CabsView() {
             {/* Section selection buttons */}
             <div style={{ marginBottom: "20px" }}>
                 {["one-way", "round-trip", "multi-city"].map((section) => (
-                    <button key={section} onClick={() => setSelectedSection(section)} style={{ marginRight: "10px" }}>
+                    <button
+                        key={section}
+                        onClick={() => setSelectedSection(section)}
+                        style={{ marginRight: "10px" }}
+                    >
                         {section.replace("-", " ")}
                     </button>
                 ))}
@@ -70,7 +113,7 @@ function CabsView() {
                             {sectionHeaders[selectedSection].map((header) => (
                                 <th key={header}>{header}</th>
                             ))}
-                            <th>Action</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>{Object.keys(data).map(renderRow)}</tbody>

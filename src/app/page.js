@@ -25,7 +25,7 @@ export function Slidebar({ activeButton, onButtonClick }) {
   return (
     <nav className={`${style.sidebar}`}>
       <ul className={`${style.silderlist}`}>
-        {["Dashboard", "Agents", "Users", "Tour", "Cabs", "Slider"].map((button) => (
+        {["Dashboard", "Agents", "Users", "Group Tours", "Cabs", "Slider"].map((button) => (
           <li
             key={button}
             onClick={() => onButtonClick(button)}
