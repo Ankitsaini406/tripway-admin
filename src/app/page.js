@@ -52,7 +52,7 @@ export function BodyContent({ activeButton }) {
       {activeButton === "Dashboard" && <Dashboard />}
       {activeButton === "Agents" && <AgentView />}
       {activeButton === "Users" && <UserView />}
-      {activeButton === "Tour" && <TourView />}
+      {activeButton === "Group Tours" && <TourView />}
       {activeButton === "Cabs" && <CabsView />}
       {activeButton === "Slider" && <p>Edit your sliders here.</p>}
       {activeButton === "Logout" && ""}

@@ -12,10 +12,9 @@ function TourView() {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingAgent, setEditingAgent] = useState(null);
     const [refreshKey, setRefreshKey] = useState(0);
-    const [selectedSection, setSelectedSection] = useState("tour"); // Track which section is selected (tour or group-tour)
 
     const { token } = useAuth();
-    const { data } = useViewData(token, selectedSection === "tour" ? 'tour/get' : 'group-tour/get', refreshKey);
+    const { data } = useViewData(token, 'group-tour/get', refreshKey);
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -26,8 +25,8 @@ function TourView() {
     };
 
     const handleOpenEditModal = (uid) => {
-        const agentToEdit = data[uid];
-        setEditingAgent(agentToEdit);
+        const tourToEdit = data[uid];
+        setEditingAgent(tourToEdit);
         setIsEditModalOpen(true);
     };
 
@@ -39,7 +38,7 @@ function TourView() {
     const handleDeleteAgent = async (uid) => {
         try {
             // await deleteData(uid);
-            // setRefreshKey((prevKey) => prevKey + 1);
+            setRefreshKey((prevKey) => prevKey + 1);
             toast.success("Tour is deleted");
         } catch (error) {
             console.error("Error deleting agent:", error);
@@ -47,28 +46,11 @@ function TourView() {
         }
     };
 
-    // Switch between Tour and Group Tour sections
-    const handleSectionChange = (section) => {
-        setSelectedSection(section);
-        setRefreshKey((prevKey) => prevKey + 1); // Refresh data when switching sections
-    };
-
     return (
         <>
-            {/* Section selection buttons */}
-            <div style={{ marginBottom: "20px" }}>
-                <button onClick={() => handleSectionChange("tour")} style={{ marginRight: "10px" }}>
-                    Tour
-                </button>
-                <button onClick={() => handleSectionChange("group-tour")}>
-                    Group Tour
-                </button>
-            </div>
-
-            {/* Create Tour Modal */}
-            <button onClick={handleOpenModal}>Create {selectedSection === "tour" ? "Tour" : "Group Tour"}</button>
+            <button onClick={handleOpenModal}>Create Group Tour</button>
             <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-                <CreateTour title={selectedSection === "tour" ? 'Tour' : 'Group Tour'} url={selectedSection === "tour" ? 'tour/add-tour' : 'group-tour/add-group-tour'} />
+                <CreateTour title='Group Tour' url='group-tour/add-group-tour' />
             </Modal>
 
             {/* Edit Tour Modal */}
@@ -77,7 +59,7 @@ function TourView() {
                     <EditPersonData
                         person={editingAgent}
                         onCancel={handleCloseEditModal}
-                        url={selectedSection === "tour" ? 'tour' : 'group-tour'}
+                        url='group-tour'
                     />
                 )}
             </Modal>
@@ -101,7 +83,7 @@ function TourView() {
                                 <td>{data[uid].name}</td>
                                 <td>{data[uid].category}</td>
                                 <td>{data[uid].price}</td>
-                                <td>{data[uid].imageUrl}<img width={200} height={200} src={data[uid].imageUrl || 'https://tripwayholidays.in/tour-image/csgoskins-avatar.jpg'} alt={data[uid].name} /></td>
+                                <td><img width={200} height={200} src={`https://tripwayholidays.in/tour-image/${data[uid].imageUrl}`} alt={data[uid].imageUrl} /></td>
                                 <td>{data[uid].description}</td>
                                 <td style={{ display: 'flex' }}>
                                     <button

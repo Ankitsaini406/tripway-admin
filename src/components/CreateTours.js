@@ -9,7 +9,7 @@ function CreateTour({ title, url }) {
         price: '',
         category: '',
         description: '',
-        img: null,
+        img: '',
     });
     const [imgPreview, setImgPreview] = useState('');
     const { createTour, isUploading, error, success } = useCreateTour(url); // Use the custom hook
@@ -22,7 +22,8 @@ function CreateTour({ title, url }) {
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setFormData((prevData) => ({ ...prevData, img: file }));
+            // Store only the image name, not the file object
+            setFormData((prevData) => ({ ...prevData, img: file.name }));
             setImgPreview(URL.createObjectURL(file)); // Preview the image
         }
     };
@@ -40,7 +41,7 @@ function CreateTour({ title, url }) {
             price: '',
             category: '',
             description: '',
-            img: null,
+            img: '',
         });
         setImgPreview('');
     };
