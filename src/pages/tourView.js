@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import useAuth from "@/hook/useAuth";
-import useAuthorizedRequest from "@/hook/useAuthorizedRequest";
 import { useViewData } from "@/hook/useViewData";
 import Modal from "@/utils/Modal";
 import EditPersonData from "@/components/EditPerson";
@@ -16,9 +15,7 @@ function TourView() {
     const [selectedSection, setSelectedSection] = useState("tour"); // Track which section is selected (tour or group-tour)
 
     const { token } = useAuth();
-    const { makeRequest } = useAuthorizedRequest();
-
-    const { data } = useViewData(token, makeRequest, selectedSection === "tour" ? 'tour/get' : 'group-tour/get', refreshKey);
+    const { data } = useViewData(token, selectedSection === "tour" ? 'tour/get' : 'group-tour/get', refreshKey);
 
     const handleOpenModal = () => {
         setIsModalOpen(true);

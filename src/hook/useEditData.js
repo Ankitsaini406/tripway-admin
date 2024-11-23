@@ -1,29 +1,43 @@
 import { useState, useEffect } from "react";
 import { getCookie } from "cookies-next";
 
-const useEditData = (url, uid, makeRequest, token) => {
+const useEditData = (url, uid, token) => {
     const [person, setPerson] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [clientToken, setClientToken] = useState(null);
 
     useEffect(() => {
-        setClientToken(token || getCookie("token"));
-    }, [token]);
-
-    useEffect(() => {
-        if (!uid || !clientToken) return; // Do nothing if UID or token is not provided
+        if (!uid || !url) {
+            console.error("Invalid URL or UID:", { url, uid });
+            setError("Invalid URL or UID.");
+            return;
+        }
+        setLoading(true);
 
         const fetchData = async () => {
-            setLoading(true);
+            const storedToken = token || getCookie("token");
+            if (!storedToken) {
+                console.error("Token is missing.");
+                setError("Token is missing.");
+                setLoading(false);
+                return;
+            }
+
             try {
-                const response = await makeRequest(
-                    `http://localhost:3000/api/${url}/${uid}`,
-                    'GET',
-                    null,
-                    clientToken
-                );
-                setPerson(response); // Set the person data from response
+                const response = await fetch(`http://localhost:3000/api/${url}/${uid}`, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${storedToken}`,
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                setPerson(data);
             } catch (err) {
                 console.error("Error fetching person data:", err.message);
                 setError("Failed to fetch person data.");
@@ -32,42 +46,72 @@ const useEditData = (url, uid, makeRequest, token) => {
             }
         };
 
-        fetchData(); // Fetch person details on hook mount
-    }, [url, uid, clientToken, makeRequest]);
+        fetchData();
+    }, [url, uid, token]);
 
     const editData = async (updatedData) => {
-        console.log('This is edit uid : ', uid);
+        if (!person) {
+            console.error("No person data to update.");
+            setError("No person data to update.");
+            return;
+        }
+    
         setLoading(true);
-
-        // Create a payload with only the modified fields
-        const changes = {};
-
-        // Compare the updated data with the current person data
-        Object.keys(updatedData).forEach((key) => {
+    
+        // Validate required fields
+        if (!updatedData.phoneNumber || !updatedData.email) {
+            console.error("Missing required fields: phoneNumber or email", updatedData.email, updatedData.phoneNumber);
+            setError("Phone number and email are required.");
+            setLoading(false);
+            return;
+        }
+    
+        const changes = Object.keys(updatedData).reduce((acc, key) => {
             if (updatedData[key] !== person[key]) {
-                changes[key] = updatedData[key];
+                acc[key] = updatedData[key];
             }
-        });
-
+            return acc;
+        }, {});
+    
         if (Object.keys(changes).length === 0) {
             setError("No changes made.");
             setLoading(false);
             return;
         }
-
+    
+        console.log("Payload being sent to API:", changes);
+    
         try {
-            const response = await makeRequest(
-                `http://localhost:3000/api/${url}/${uid}`,
-                'PUT',
-                changes, // Only send the modified fields
-                clientToken
-            );
-            setPerson(response); // Update local state with the new person data
-            return response; // Optionally return response
+            const storedToken = token || getCookie("token");
+            if (!storedToken) {
+                console.error("Token is missing.");
+                setError("Token is missing.");
+                setLoading(false);
+                return;
+            }
+    
+            const response = await fetch(`http://localhost:3000/api/${url}/${uid}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${storedToken}`,
+                },
+                body: JSON.stringify(changes),
+            });
+    
+            if (!response.ok) {
+                const errorResponse = await response.json();
+                console.error("API response for Bad Request:", errorResponse);
+                throw new Error(errorResponse.message || `Failed to update: ${response.statusText}`);
+            }
+    
+            const updatedPerson = await response.json();
+            setPerson(updatedPerson);
+            return updatedPerson;
         } catch (err) {
             console.error("Error updating person data:", err.message);
             setError("Failed to update person data.");
-            throw err; // Throw error to be handled by component if needed
+            throw err;
         } finally {
             setLoading(false);
         }

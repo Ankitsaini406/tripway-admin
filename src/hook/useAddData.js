@@ -17,7 +17,7 @@ export const useAddData = (token) => {
     const addData = async (personData) => {
         setLoading(true);
 
-        const { name, email, phoneNumber, password, verifyPassword } = personData;
+        const { name, email, phoneNumber, password, verifyPassword, agentCode } = personData;
 
         if (!clientToken) {
             console.error("Token is missing");
@@ -40,6 +40,7 @@ export const useAddData = (token) => {
                 phoneNumber,
                 password,  // You can store or exclude sensitive data like password as needed
                 verifyPassword,
+                agentCode,
                 uid: user.uid
             });
 

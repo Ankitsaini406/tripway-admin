@@ -1,19 +1,32 @@
 import React, { useState, useEffect } from "react";
 import useAuth from "@/hook/useAuth";
-import useAuthorizedRequest from "@/hook/useAuthorizedRequest";
 import useEditData from "@/hook/useEditData";
+import { MdOutlineVisibility, MdOutlineVisibilityOff } from "react-icons/md";
 import style from "../styles/auth.module.css";
 import modalStyle from "../styles/modal.module.css";
 
 function EditPersonData({ person, onCancel, url }) {
     const { token } = useAuth();
-    const { makeRequest } = useAuthorizedRequest();
-    const { editData, loading, error } = useEditData(`${url}`, person.uid, makeRequest, token);
-    const [formData, setFormData] = useState({ name: "", email: "", phoneNumber: "" });
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const { editData, loading, error } = useEditData(`${url}`, person.uid, token);
+    const [formData, setFormData] = useState({ 
+        name: "", 
+        email: "", 
+        phoneNumber: "", 
+        password: "", 
+        verifyPassword: "" 
+    });
 
     useEffect(() => {
         if (person) {
-            setFormData({ name: person.name, email: person.email, phoneNumber: person.phoneNumber });
+            setFormData({ 
+                name: person.name, 
+                email: person.email, 
+                phoneNumber: person.phoneNumber,
+                password: person.password || "",
+                verifyPassword: person.verifyPassword || "",
+            });
         }
     }, [person]);
 
@@ -23,13 +36,30 @@ function EditPersonData({ person, onCancel, url }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Password validation
+        if (formData.password && formData.password !== formData.verifyPassword) {
+            alert("Passwords do not match.");
+            return;
+        }
+
+        const updatedData = { ...formData };
+
+        // Only include password fields if they are not empty
+        if (!formData.password) {
+            delete updatedData.password;
+            delete updatedData.verifyPassword;
+        }
+
         try {
-            await editData(formData);
+            await editData(updatedData); // Send updated data to the backend
             onCancel();
         } catch (err) {
             console.error(`Error editing ${url}:`, err);
         }
     };
+
+    const toggleVisibility = (setter) => () => setter((prev) => !prev);
 
     return (
         <form onSubmit={handleSubmit}>
@@ -44,6 +74,30 @@ function EditPersonData({ person, onCancel, url }) {
                         onChange={handleChange}
                         required
                     />
+                </div>
+            ))}
+            {["password", "confirmPassword"].map((field, index) => (
+                <div className={style.formgroup} key={field}>
+                    <label>{index === 0 ? "Password" : "Confirm Password"}</label>
+                    <div className={style.inputicon}>
+                        <input
+                            className={style.authinput}
+                            type={(index === 0 ? showPassword : showConfirmPassword) ? "text" : "password"}
+                            name={field}
+                            value={formData[field]}
+                            onChange={handleChange}
+                            placeholder={index === 0 ? "Enter new password" : "Confirm new password"}
+                        />
+                        <button
+                            type="button"
+                            className={style.passwordtogglebtn}
+                            onClick={toggleVisibility(index === 0 ? setShowPassword : setShowConfirmPassword)}
+                        >
+                            {index === 0
+                                ? (showPassword ? <MdOutlineVisibilityOff /> : <MdOutlineVisibility />)
+                                : (showConfirmPassword ? <MdOutlineVisibilityOff /> : <MdOutlineVisibility />)}
+                        </button>
+                    </div>
                 </div>
             ))}
             {loading && <p>Saving changes...</p>}

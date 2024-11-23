@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import Modal from "@/utils/Modal";
 import useAuth from "@/hook/useAuth";
-import useAuthorizedRequest from "@/hook/useAuthorizedRequest";
 import { useViewData } from "@/hook/useViewData";
 
 function UserView() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
     const { token } = useAuth();
-    const { makeRequest } = useAuthorizedRequest();
-    const { data } = useViewData(token, makeRequest, 'users/get', refreshKey);
+    const { data } = useViewData(token, 'users/get', refreshKey);
 
     const handleOpenModal = () => {
         setIsModalOpen(true);

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getCookie } from 'cookies-next'; // Import cookies-next
 
-export const useViewData = (token, makeRequest, url, refreshKey) => {
+export const useViewData = (token, url, refreshKey) => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -46,7 +46,7 @@ export const useViewData = (token, makeRequest, url, refreshKey) => {
         };
 
         fetchData();
-    }, [token, makeRequest, url, refreshKey]); // Depend on token, makeRequest, url, and refreshKey
+    }, [token, url, refreshKey]); // Depend on token, makeRequest, url, and refreshKey
 
     return { data, loading, error };
 };

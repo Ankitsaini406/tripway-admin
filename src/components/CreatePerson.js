@@ -12,6 +12,7 @@ function CreatePerson({ title, url }) {
         email: "",
         password: "",
         verifyPassword: "",
+        agentCode: "",
     });
     const [showPassword, setShowPassword] = useState(false);
     const [showVerifyPassword, setShowVerifyPassword] = useState(false);
@@ -19,6 +20,16 @@ function CreatePerson({ title, url }) {
     const { token } = useAuth();
     const { makeRequest } = useAuthorizedRequest();
     const { addData, loading } = useAddData(token, makeRequest);
+
+    // Helper function to generate a 6-character alphanumeric code
+    const generateAgentCode = () => {
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        let code = "";
+        for (let i = 0; i < 6; i++) {
+            code += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return `Trip-${code}`;
+    };
 
     const handleInputChange = (e) => {
         const { id, value } = e.target;
@@ -40,12 +51,15 @@ function CreatePerson({ title, url }) {
             return;
         }
 
+        // Generate a unique agent code
+        const agentCode = generateAgentCode();
+
         try {
-            await addData(formData);
+            await addData({ ...formData, agentCode }); // Include the agent code in the data
             setFormData({ name: "", phoneNumber: "", email: "", password: "", verifyPassword: "" });
-            alert(`${title} created successfully!`);
+            alert(`${title} created successfully with code: ${agentCode}`);
         } catch (err) {
-            setError("Failed to sign up. Please try again.");
+            setError("Failed to create agent. Please try again.");
             console.error(err);
         }
     };

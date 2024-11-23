@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import useAuth from "@/hook/useAuth";
-import useAuthorizedRequest from "@/hook/useAuthorizedRequest";
 import { useViewData } from "@/hook/useViewData";
 import Modal from "@/utils/Modal";
 import EditPersonData from "@/components/EditPerson";
@@ -14,8 +13,7 @@ function AgentView() {
     const [editingAgent, setEditingAgent] = useState(null);
     const [refreshKey, setRefreshKey] = useState(0);
     const { token } = useAuth();
-    const { makeRequest } = useAuthorizedRequest();
-    const { data } = useViewData(token, makeRequest, 'agents/get', refreshKey);
+    const { data } = useViewData(token, 'agents/get', refreshKey);
     const { deleteData, isDeleting, response, error } = useDeleteAgent();
 
     const handleOpenModal = () => {
@@ -73,6 +71,7 @@ function AgentView() {
                             <th>Name</th>
                             <th>Email</th>
                             <th>Phone</th>
+                            <th>Agent Code</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -82,6 +81,7 @@ function AgentView() {
                                 <td>{data[uid].name}</td>
                                 <td>{data[uid].email}</td>
                                 <td>{data[uid].phoneNumber}</td>
+                                <td>{data[uid].agentCode}</td>
                                 <td>
                                 <button
                                         onClick={() => handleOpenEditModal(uid)}

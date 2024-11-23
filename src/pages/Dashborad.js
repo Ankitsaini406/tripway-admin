@@ -1,14 +1,12 @@
 import { useState } from "react";
 import useAuth from "../hook/useAuth";
-import useAuthorizedRequest from "../hook/useAuthorizedRequest";
 import { useViewData } from "../hook/useViewData";
 
 function Dashboard() {
     const { token } = useAuth();
-    const { makeRequest } = useAuthorizedRequest();
     const [refreshKey, setRefreshKey] = useState(0);
-    const { data: agents, loading: loadingAgents, error: errorAgents } = useViewData(token, makeRequest, 'agents/get', refreshKey);
-    const { data: users, loading: loadingUsers, error: errorUsers } = useViewData(token, makeRequest, 'users/get', refreshKey);
+    const { data: agents, loading: loadingAgents, error: errorAgents } = useViewData(token, 'agents/get', refreshKey);
+    const { data: users, loading: loadingUsers, error: errorUsers } = useViewData(token, 'users/get', refreshKey);
 
     return (
         <>
