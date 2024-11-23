@@ -48,32 +48,22 @@ function EditPersonData({ person, onCancel, url }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Password validation
-        if (formData.password && formData.password !== formData.verifyPassword) {
-            alert("Passwords do not match.");
-            return;
-        }
-
         const updatedData = { ...formData };
-
-        // Only update fields that have changed
         const dataToUpdate = {};
 
-        // Check if the fields are updated, if so, add to dataToUpdate
         Object.keys(updatedData).forEach((key) => {
             if (updatedData[key] !== oldData[key]) {
                 dataToUpdate[key] = updatedData[key];
             }
         });
 
-        // Only include password fields if they are not empty
         if (!updatedData.password) {
             delete dataToUpdate.password;
             delete dataToUpdate.verifyPassword;
         }
 
         try {
-            await editData(dataToUpdate); // Send updated data to the backend
+            await editData(dataToUpdate);
             onCancel();
         } catch (err) {
             console.error(`Error editing ${url}:`, err);
@@ -97,7 +87,7 @@ function EditPersonData({ person, onCancel, url }) {
                     />
                 </div>
             ))}
-            {["password", "confirmPassword"].map((field, index) => (
+            {["password", "verifyPassword"].map((field, index) => (
                 <div className={style.formgroup} key={field}>
                     <label>{index === 0 ? "Password" : "Confirm Password"}</label>
                     <div className={style.inputicon}>
