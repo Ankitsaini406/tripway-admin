@@ -4,7 +4,6 @@ import { useViewData } from "@/hook/useViewData";
 import Modal from "@/utils/Modal";
 import EditPersonData from "@/components/EditPerson";
 import CreateTour from "@/components/CreateTours";
-import Image from "next/image";
 import { toast } from "react-toastify";
 import LazyLoadImage from "@/utils/lazyImageLoading";
 
@@ -54,7 +53,6 @@ function TourView() {
                 <CreateTour title='Group Tour' url='group-tour/add-group-tour' />
             </Modal>
 
-            {/* Edit Tour Modal */}
             <Modal isOpen={isEditModalOpen} onClose={handleCloseEditModal}>
                 {editingAgent && (
                     <EditPersonData
@@ -65,7 +63,6 @@ function TourView() {
                 )}
             </Modal>
 
-            {/* Data Display */}
             {data ? (
                 <table>
                     <thead>
