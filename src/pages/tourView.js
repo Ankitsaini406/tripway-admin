@@ -83,7 +83,7 @@ function TourView() {
                                 <td>{data[uid].name}</td>
                                 <td>{data[uid].category}</td>
                                 <td>{data[uid].price}</td>
-                                <td><img width={200} height={200} src={`https://tripwayholidays.in/tour-image/${data[uid].imageUrl}`} alt={data[uid].imageUrl} /></td>
+                                <td><img width={200} height={200} src={`https://tripwayholidays.in//tour-image/${data[uid].imageUrl}`} alt={data[uid].imageUrl} /></td>
                                 <td>{data[uid].description}</td>
                                 <td style={{ display: 'flex' }}>
                                     <button

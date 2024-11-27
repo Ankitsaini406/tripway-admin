@@ -10,10 +10,10 @@
   background-color: var(--mystic-blue);
   transition: width 0.3s ease;
   overflow: hidden;
-  height: 100svh;
+  /* height: 100svh; */
   position: sticky;
   top: 0;
-  max-height: 100svh;
+  /* max-height: 100svh; */
 }
 
 .silderlist {
