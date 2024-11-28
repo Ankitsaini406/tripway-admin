@@ -14,7 +14,7 @@ function CreateTour({ title, url, onSuccess }) {
     });
     const [imgPreview, setImgPreview] = useState('');
     const { token } = useAuth();
-    const { createTour, isUploading, error: createError, success: createSuccess } = useCreateTour(url);
+    const { createTour, isUploading, error: createError, success: createSuccess } = useCreateTour(url, token);
 
     const handleChange = (e) => {
         const { name, value } = e.target;

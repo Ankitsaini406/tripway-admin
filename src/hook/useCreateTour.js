@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const useCreateTour = (url) => {
+const useCreateTour = (url, token) => {
     const [isUploading, setIsUploading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
@@ -11,22 +11,20 @@ const useCreateTour = (url) => {
         setSuccess(null);
 
         try {
-            // Prepare the tour data to be saved in the database (without image)
             const tourDataToSave = {
                 name: tourData.name,
                 price: tourData.price,
                 category: tourData.category,
                 description: tourData.description,
                 imageUrl: tourData.imageUrl,
-                // Do not send image, just save the other details
             };
 
-            // Step 1: Submit the tour data (excluding image) to your backend to save in the database
             const response = await fetch(`http://localhost:3000/api/${url}`, {
                 method: 'POST',
                 body: JSON.stringify(tourDataToSave),
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
             });
 
