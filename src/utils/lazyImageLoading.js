@@ -33,8 +33,8 @@ function LazyLoadImage({ className, src, alt, imageLength }) {
                 data-src={src}
                 src={src}
                 alt={alt}
-                width='200'
-                height='200'
+                width='100'
+                height='100'
                 ref={(el) => (imageRefs.current[imageLength] = el)}
                 loading="lazy" />
         </>

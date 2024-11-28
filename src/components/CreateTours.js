@@ -48,7 +48,7 @@ function CreateTour({ title, url }) {
 
     return (
         <form onSubmit={handleSubmit}>
-            {['name', 'price', 'category', 'description'].map((field) => (
+            {['name', 'price', 'category'].map((field) => (
                 <div key={field} className={style.formgroup}>
                     <label>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
                     <input
@@ -61,6 +61,17 @@ function CreateTour({ title, url }) {
                     />
                 </div>
             ))}
+            <div className={style.formgroup}>
+                <label>Description</label>
+                <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    required
+                    className={style.authinput}
+                    rows="4"
+                ></textarea>
+            </div>
             <div className={style.formgroup}>
                 <label>Upload Image</label>
                 <input type="file" accept="image/*" onChange={handleImageChange} required />

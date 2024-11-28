@@ -6,6 +6,7 @@ import EditPersonData from "@/components/EditPerson";
 import CreateTour from "@/components/CreateTours";
 import { toast } from "react-toastify";
 import LazyLoadImage from "@/utils/lazyImageLoading";
+import { formatPrice, truncateDescription } from "@/utils/utilsConverter";
 
 function TourView() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -80,9 +81,9 @@ function TourView() {
                             <tr key={uid}>
                                 <td>{data[uid].name}</td>
                                 <td>{data[uid].category}</td>
-                                <td>{data[uid].price}</td>
+                                <td>{formatPrice(data[uid].price)}</td>
                                 <td><LazyLoadImage src={`https://tripwayholidays.in//tour-image/${data[uid].imageUrl}`} alt={data[uid].imageUrl} /></td>
-                                <td>{data[uid].description}</td>
+                                <td style={{ maxWidth: '200px' }}>{truncateDescription(data[uid].description)}</td>
                                 <td style={{ display: 'flex', border: 'none', borderTop: '1px solid #ddd' }}>
                                     <button
                                         onClick={() => handleOpenEditModal(uid)}

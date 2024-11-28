@@ -4,23 +4,12 @@ import useAuth from "@/hook/useAuth";
 import { useViewData } from "@/hook/useViewData";
 
 function UserView() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
     const { token } = useAuth();
     const { data } = useViewData(token, 'users/get', refreshKey);
 
-    const handleOpenModal = () => {
-        setIsModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-    };
-
     return (
         <>
-            <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-            </Modal>
             {data ? (
                 <table>
                     <thead>
