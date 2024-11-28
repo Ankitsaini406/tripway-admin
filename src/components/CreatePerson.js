@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import useAuth from "@/hook/useAuth";
 import useAuthorizedRequest from "@/hook/useAuthorizedRequest";
-import { useAddData } from "@/hook/useAddData";
 import { MdOutlineVisibility, MdOutlineVisibilityOff } from "react-icons/md";
 import style from "../styles/auth.module.css";
+import useAgentData from "@/hook/useAgentData";
 
 function CreatePerson({ title, url }) {
     const [formData, setFormData] = useState({
@@ -16,10 +16,11 @@ function CreatePerson({ title, url }) {
     });
     const [showPassword, setShowPassword] = useState(false);
     const [showVerifyPassword, setShowVerifyPassword] = useState(false);
-    const [error, setError] = useState("");
+    // const [error, setError] = useState("");
     const { token } = useAuth();
     const { makeRequest } = useAuthorizedRequest();
-    const { addData, loading } = useAddData(token, makeRequest);
+    const { addData, loading, error} = useAgentData(token);
+    // const { addData, loading } = useAddData(token, makeRequest);
 
     // Helper function to generate a 6-character alphanumeric code
     const generateAgentCode = () => {

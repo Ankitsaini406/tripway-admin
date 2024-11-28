@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useAuth from "@/hook/useAuth";
-import { useViewData } from "@/hook/useViewData";
 import Modal from "@/utils/Modal";
 import EditPersonData from "@/components/EditPerson";
 import CreatePerson from "@/components/CreatePerson";
-import useDeleteAgent from "@/hook/useDelete";
 import { toast } from "react-toastify";
+import useAgentData from "@/hook/useAgentData";
 
 function AgentView() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,8 +12,7 @@ function AgentView() {
     const [editingAgent, setEditingAgent] = useState(null);
     const [refreshKey, setRefreshKey] = useState(0);
     const { token } = useAuth();
-    const { data } = useViewData(token, 'agents/get', refreshKey);
-    const { deleteData, isDeleting, response, error } = useDeleteAgent();
+    const { viewData, deleteData, data, loading, response, error } = useAgentData(token, 'agents/get', refreshKey);
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -39,14 +37,19 @@ function AgentView() {
         try {
             // await deleteData(uid);
             await deleteData(`/agents/${uid}`);
-            toast.info(response);
+            toast.info(response?.message || "Agent deleted successfully");
             setRefreshKey((prevKey) => prevKey + 1);
         } catch (error) {
-            console.error("Error deleting agent:", error);
+            console.log("Error deleting agent:", error);
+            toast.error(error?.message || "Failed to delete agent");
         }
     };
 
-    if (isDeleting) return <p>Loading...</p>;
+    useEffect(() => {
+        viewData('agents/get');
+    }, [viewData])
+
+    if (loading) return <p>Loading...</p>;
     // if (error) return <p>Error: {error.message}</p>;
 
     return (
@@ -58,7 +61,7 @@ function AgentView() {
             <Modal isOpen={isEditModalOpen} onClose={handleCloseEditModal}>
                 {editingAgent && (
                     <EditPersonData
-                    person={editingAgent}
+                        person={editingAgent}
                         onCancel={handleCloseEditModal}
                         url={'agents'}
                     />
@@ -83,7 +86,7 @@ function AgentView() {
                                 <td>{data[uid].phoneNumber}</td>
                                 <td>{data[uid].agentCode}</td>
                                 <td>
-                                <button
+                                    <button
                                         onClick={() => handleOpenEditModal(uid)}
                                         className={`editbtn tablebutton`}
                                     >

@@ -5,8 +5,8 @@ import { database, auth } from "@/firebase/firebaseAdmin";
 import { NextResponse } from "next/server";
 
 // GET handler to fetch an agent by ID
-export async function GET(req, { params }) {
-    const { id } = params;  // Extract `id` from the URL parameters
+export async function GET(req, context) {
+    const { id } = await context.params;
 
     try {
         const agentRef = ref(database, `agents/${id}`);
@@ -24,12 +24,12 @@ export async function GET(req, { params }) {
 }
 
 // PUT handler to update an agent by ID
-export async function PUT(req, { params }) {
-    const { id } = params;
+export async function PUT(req, context) {
+    const { id } = await context.params;
     let data;
 
     try {
-        data = await req.json(); // Parse incoming JSON data
+        data = await req.json();
     } catch (err) {
         return NextResponse.json({ message: 'Invalid JSON' }, { status: 400 });
     }
@@ -38,7 +38,6 @@ export async function PUT(req, { params }) {
         const agentRef = ref(database, `agents/${id}`);
         await update(agentRef, data);
 
-        // Assuming `auth` is the Firebase Admin Auth SDK
         const updatedUser = await auth.updateUser(id, {
             displayName: data.name,
             email: data.email,
@@ -59,29 +58,21 @@ export async function PUT(req, { params }) {
 
 // DELETE handler to delete an agent by ID
 export async function DELETE(req, context) {
-    const { id } = await context.params; // Await the context.params
+    const { id } = await context.params;
 
     try {
-        // Reference the specific agent in Firebase Realtime Database
         const agentRef = ref(database, `agents/${id}`);
         
-        // Check if the agent exists in the database
         const snapshot = await get(agentRef);
         if (!snapshot.exists()) {
             return NextResponse.json({ message: 'Agent not found' }, { status: 404 });
         }
-
-        // Retrieve the agent's UID from the database
         const agent = snapshot.val();
         const uid = agent.uid;
 
-        // Delete the agent data from Realtime Database
         await remove(agentRef);
-
-        // Delete the agent from Firebase Authentication
         await auth.deleteUser(uid);
 
-        // Send a success response
         return NextResponse.json({ message: 'Agent deleted successfully' }, { status: 200 });
     } catch (error) {
         console.error("Error deleting agent:", error);

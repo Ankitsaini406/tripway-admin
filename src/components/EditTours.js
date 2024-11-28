@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import style from '../styles/auth.module.css';
-import useEditData from "@/hook/useEditData";
 import useAuth from "@/hook/useAuth";
 import Image from "next/image";
+import useTourData from "@/hook/useTourData";
 
 function EditTour({ title, url, tourData, onSuccess }) {
     const [formData, setFormData] = useState({
@@ -14,7 +14,7 @@ function EditTour({ title, url, tourData, onSuccess }) {
     });
     const [imgPreview, setImgPreview] = useState('');
     const { token } = useAuth();
-    const { editData, loading: isEditing, error: editError, success: editSuccess } = useEditData(`${url}`, tourData.id, token);
+    const { editTour, loading, error, success} = useTourData(token);
 
     // Initialize form with existing tour data
     useEffect(() => {
@@ -49,9 +49,9 @@ function EditTour({ title, url, tourData, onSuccess }) {
         e.preventDefault();
         if (!formData.imageUrl) return alert("Please upload an image.");
 
-        await editData(formData);
+        await editTour(url, tourData.id, formData);
 
-        if (editSuccess) {
+        if (success) {
             resetForm();
             if (onSuccess) onSuccess();
         }
@@ -101,14 +101,14 @@ function EditTour({ title, url, tourData, onSuccess }) {
             </div>
             <button
                 type="submit"
-                disabled={isEditing}
+                disabled={loading}
                 className={style.loginbutton}
             >
-                {isEditing ? 'Processing...' : `Update ${title}`}
+                {loading ? 'Processing...' : `Update ${title}`}
             </button>
 
-            {editError && <p style={{ color: "red" }}>{editError}</p>}
-            {editSuccess && <p style={{ color: "green" }}>Tour updated successfully!</p>}
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            {success && <p style={{ color: "green" }}>Tour updated successfully!</p>}
         </form>
     );
 }

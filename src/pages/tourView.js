@@ -1,21 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useAuth from "@/hook/useAuth";
-import { useViewData } from "@/hook/useViewData";
 import Modal from "@/utils/Modal";
 import CreateTour from "@/components/CreateTours";
 import { toast } from "react-toastify";
 import LazyLoadImage from "@/utils/lazyImageLoading";
 import { formatPrice, truncateDescription } from "@/utils/utilsConverter";
 import EditTour from "@/components/EditTours";
+import useTourData from "@/hook/useTourData";
 
 function TourView() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingTour, setEditingTour] = useState(null);
     const [refreshKey, setRefreshKey] = useState(0);
-
     const { token } = useAuth();
-    const { data } = useViewData(token, 'group-tour/get', refreshKey);
+    const { tours, deleteTour, fetchTours } = useTourData(token);
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -26,7 +25,7 @@ function TourView() {
     };
 
     const handleOpenEditModal = (uid) => {
-        const tourToEdit = data[uid];
+        const tourToEdit = tours[uid];
         setEditingTour(tourToEdit);
         setIsEditModalOpen(true);
     };
@@ -38,7 +37,7 @@ function TourView() {
 
     const handleDeleteAgent = async (uid) => {
         try {
-            // await deleteData(uid);
+            await deleteTour(`group-tour/`, uid);
             setRefreshKey((prevKey) => prevKey + 1);
             toast.success("Tour is deleted");
         } catch (error) {
@@ -46,6 +45,10 @@ function TourView() {
             toast.error("Error deleting the tour");
         }
     };
+
+    useEffect(() => {
+        fetchTours('group-tour/get');
+    }, [])
 
     return (
         <>
@@ -65,7 +68,7 @@ function TourView() {
                 )}
             </Modal>
 
-            {data ? (
+            {tours ? (
                 <table>
                     <thead>
                         <tr>
@@ -78,13 +81,13 @@ function TourView() {
                         </tr>
                     </thead>
                     <tbody>
-                        {Object.keys(data).map((uid) => (
+                        {Object.keys(tours).map((uid) => (
                             <tr key={uid}>
-                                <td>{data[uid].name}</td>
-                                <td>{data[uid].category}</td>
-                                <td>{formatPrice(data[uid].price)}</td>
-                                <td style={{ width: '100px', height: '100px' }}><LazyLoadImage src={`https://tripwayholidays.in//tour-image/${data[uid].imageUrl}`} alt={data[uid].imageUrl} /></td>
-                                <td style={{ maxWidth: '200px' }}>{truncateDescription(data[uid].description)}</td>
+                                <td>{tours[uid].name}</td>
+                                <td>{tours[uid].category}</td>
+                                <td>{formatPrice(tours[uid].price)}</td>
+                                <td style={{ width: '100px', height: '100px' }}><LazyLoadImage src={`https://tripwayholidays.in//tour-image/${tours[uid].imageUrl}`} alt={tours[uid].imageUrl} /></td>
+                                <td style={{ maxWidth: '200px' }}>{truncateDescription(tours[uid].description)}</td>
                                 <td style={{ display: 'flex', border: 'none', borderTop: '1px solid #ddd' }}>
                                     <button
                                         onClick={() => handleOpenEditModal(uid)}
@@ -93,7 +96,7 @@ function TourView() {
                                         Edit
                                     </button>
                                     <button
-                                        onClick={() => handleDeleteAgent(uid)}
+                                        onClick={() => handleDeleteAgent(tours[uid].id)}
                                         className={`deletebtn tablebutton`}
                                     >
                                         Delete

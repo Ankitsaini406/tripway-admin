@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import useAuth from "@/hook/useAuth";
-import useEditData from "@/hook/useEditData";
 import { MdOutlineVisibility, MdOutlineVisibilityOff } from "react-icons/md";
 import style from "../styles/auth.module.css";
 import modalStyle from "../styles/modal.module.css";
+import useAgentData from "@/hook/useAgentData";
 
 function EditPersonData({ person, onCancel, url }) {
     const { token } = useAuth();
-    const { editData, loading, error } = useEditData(`${url}`, person.uid, token);
+    const { editData, loading, error } = useAgentData(token);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [formData, setFormData] = useState({
@@ -63,7 +63,7 @@ function EditPersonData({ person, onCancel, url }) {
         }
 
         try {
-            await editData(dataToUpdate);
+            await editData(`${url}`, person.uid, dataToUpdate);
             onCancel();
         } catch (err) {
             console.error(`Error editing ${url}:`, err);
