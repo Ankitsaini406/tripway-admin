@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import style from '../styles/auth.module.css';
-import useCreateTour from "@/hook/useCreateTour";  // Import the custom hook
+import useCreateTour from "@/hook/useCreateTour";
+import useAuth from "@/hook/useAuth";
+import useEditData from "@/hook/useEditData";
 import Image from "next/image";
 
-function CreateTour({ title, url }) {
+function CreateTour({ title, url, tourData, onSuccess }) {
     const [formData, setFormData] = useState({
         name: '',
         price: '',
@@ -12,7 +14,25 @@ function CreateTour({ title, url }) {
         img: '',
     });
     const [imgPreview, setImgPreview] = useState('');
-    const { createTour, isUploading, error, success } = useCreateTour(url); // Use the custom hook
+    const { token } = useAuth();
+    const { createTour, isUploading, error: createError, success: createSuccess } = useCreateTour(url); // For adding data
+    const { editData, loading: isEditing, error: editError, success: editSuccess } = useEditData(`${url}`, tourData.id, token); // For editing data
+
+    // Initialize the form with data for edit mode
+    useEffect(() => {
+        if (tourData) {
+            setFormData({
+                name: tourData.name || '',
+                price: tourData.price || '',
+                category: tourData.category || '',
+                description: tourData.description || '',
+                img: tourData.imageUrl || '',
+            });
+            if (tourData.imageUrl) {
+                setImgPreview(`https://tripwayholidays.in//tour-image/${tourData.imageUrl}`); // Adjust the path for your project
+            }
+        }
+    }, [tourData]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -30,9 +50,18 @@ function CreateTour({ title, url }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!formData.img) return alert("Please upload an image.");  // Image check
-        await createTour(formData);  // Call the custom hook to create the tour
-        resetForm(); // Reset the form after submission
+        if (!formData.img) return alert("Please upload an image.");
+
+        if (tourData) {
+            await editData(formData);
+        } else {
+            await createTour(formData);
+        }
+
+        if ((tourData && editSuccess) || (!tourData && createSuccess)) {
+            resetForm();
+            if (onSuccess) onSuccess();
+        }
     };
 
     const resetForm = () => {
@@ -74,15 +103,31 @@ function CreateTour({ title, url }) {
             </div>
             <div className={style.formgroup}>
                 <label>Upload Image</label>
-                <input type="file" accept="image/*" onChange={handleImageChange} required />
+                <input type="file" accept="image/*" onChange={handleImageChange} />
                 {imgPreview && <Image src={imgPreview} alt="Preview" width={200} height={200} />}
             </div>
-            <button type="submit" disabled={isUploading} className={style.loginbutton}>
-                {isUploading ? 'Uploading...' : `Create ${title}`}
+            <button
+                type="submit"
+                disabled={isUploading || isEditing}
+                className={style.loginbutton}
+            >
+                {isUploading || isEditing
+                    ? 'Processing...'
+                    : tourData
+                    ? `Update ${title}`
+                    : `Create ${title}`}
             </button>
 
-            {error && <p style={{ color: "red" }}>{error}</p>}  {/* Display error if any */}
-            {success && <p style={{ color: "green" }}>{success}</p>}  {/* Display success message */}
+            {/* Display errors */}
+            {(createError || editError) && (
+                <p style={{ color: "red" }}>{createError || editError}</p>
+            )}
+            {/* Display success */}
+            {((!tourData && createSuccess) || (tourData && editSuccess)) && (
+                <p style={{ color: "green" }}>
+                    {tourData ? "Tour updated successfully!" : "Tour created successfully!"}
+                </p>
+            )}
         </form>
     );
 }

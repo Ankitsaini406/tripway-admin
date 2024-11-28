@@ -11,7 +11,7 @@ import { formatPrice, truncateDescription } from "@/utils/utilsConverter";
 function TourView() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [editingAgent, setEditingAgent] = useState(null);
+    const [editingTour, setEditingTour] = useState(null);
     const [refreshKey, setRefreshKey] = useState(0);
 
     const { token } = useAuth();
@@ -27,13 +27,13 @@ function TourView() {
 
     const handleOpenEditModal = (uid) => {
         const tourToEdit = data[uid];
-        setEditingAgent(tourToEdit);
+        setEditingTour(tourToEdit);
         setIsEditModalOpen(true);
     };
 
     const handleCloseEditModal = () => {
         setIsEditModalOpen(false);
-        setEditingAgent(null);
+        setEditingTour(null);
     };
 
     const handleDeleteAgent = async (uid) => {
@@ -51,15 +51,16 @@ function TourView() {
         <>
             <button onClick={handleOpenModal}>Create Group Tour</button>
             <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-                <CreateTour title='Group Tour' url='group-tour/add-group-tour' />
+                <CreateTour title='Group Tour' url='group-tour/add-group-tour' onSuccess={refreshKey} />
             </Modal>
 
             <Modal isOpen={isEditModalOpen} onClose={handleCloseEditModal}>
-                {editingAgent && (
-                    <EditPersonData
-                        person={editingAgent}
-                        onCancel={handleCloseEditModal}
-                        url='group-tour'
+                {editingTour && (
+                    <CreateTour
+                        title="Group Tour"
+                        url="group-tour"
+                        tourData={editingTour}
+                        onSuccess={() => setRefreshKey((prevKey) => prevKey + 1)} // refreshKey increment on success
                     />
                 )}
             </Modal>
@@ -82,7 +83,7 @@ function TourView() {
                                 <td>{data[uid].name}</td>
                                 <td>{data[uid].category}</td>
                                 <td>{formatPrice(data[uid].price)}</td>
-                                <td><LazyLoadImage src={`https://tripwayholidays.in//tour-image/${data[uid].imageUrl}`} alt={data[uid].imageUrl} /></td>
+                                <td style={{ width: '100px', height: '100px' }}><LazyLoadImage src={`https://tripwayholidays.in//tour-image/${data[uid].imageUrl}`} alt={data[uid].imageUrl} /></td>
                                 <td style={{ maxWidth: '200px' }}>{truncateDescription(data[uid].description)}</td>
                                 <td style={{ display: 'flex', border: 'none', borderTop: '1px solid #ddd' }}>
                                     <button
