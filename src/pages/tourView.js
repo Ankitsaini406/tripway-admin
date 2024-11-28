@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import useAuth from "@/hook/useAuth";
 import { useViewData } from "@/hook/useViewData";
 import Modal from "@/utils/Modal";
-import EditPersonData from "@/components/EditPerson";
 import CreateTour from "@/components/CreateTours";
 import { toast } from "react-toastify";
 import LazyLoadImage from "@/utils/lazyImageLoading";
 import { formatPrice, truncateDescription } from "@/utils/utilsConverter";
+import EditTour from "@/components/EditTours";
 
 function TourView() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -56,11 +56,11 @@ function TourView() {
 
             <Modal isOpen={isEditModalOpen} onClose={handleCloseEditModal}>
                 {editingTour && (
-                    <CreateTour
+                    <EditTour
                         title="Group Tour"
                         url="group-tour"
                         tourData={editingTour}
-                        onSuccess={() => setRefreshKey((prevKey) => prevKey + 1)} // refreshKey increment on success
+                        onSuccess={refreshKey}
                     />
                 )}
             </Modal>

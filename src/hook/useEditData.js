@@ -58,20 +58,7 @@ const useEditData = (url, uid, token) => {
     
         setLoading(true);
     
-        const changes = Object.keys(dataToUpdate).reduce((acc, key) => {
-            if (dataToUpdate[key] !== person[key]) {
-                acc[key] = dataToUpdate[key];
-            }
-            return acc;
-        }, {});
-    
-        if (Object.keys(changes).length === 0) {
-            setError("No changes made.");
-            setLoading(false);
-            return;
-        }
-    
-        console.log("Payload being sent to API:", changes);
+        console.log("Payload being sent to API:", dataToUpdate);
     
         try {
             const storedToken = token || getCookie("token");
@@ -88,7 +75,7 @@ const useEditData = (url, uid, token) => {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${storedToken}`,
                 },
-                body: JSON.stringify(changes),
+                body: JSON.stringify(dataToUpdate), // Send the entire dataToUpdate object
             });
     
             if (!response.ok) {
@@ -98,7 +85,7 @@ const useEditData = (url, uid, token) => {
             }
     
             const updatedPerson = await response.json();
-            setPerson(updatedPerson);
+            setPerson(updatedPerson); // Update local state with the updated data
             return updatedPerson;
         } catch (err) {
             console.error("Error updating person data:", err.message);

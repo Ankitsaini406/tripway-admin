@@ -17,7 +17,7 @@ const useCreateTour = (url) => {
                 price: tourData.price,
                 category: tourData.category,
                 description: tourData.description,
-                imageUrl: tourData.img,
+                imageUrl: tourData.imageUrl,
                 // Do not send image, just save the other details
             };
 

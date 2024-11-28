@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import style from '../styles/auth.module.css';
-import useCreateTour from "@/hook/useCreateTour";
+import useEditData from "@/hook/useEditData";
 import useAuth from "@/hook/useAuth";
 import Image from "next/image";
 
-function CreateTour({ title, url, onSuccess }) {
+function EditTour({ title, url, tourData, onSuccess }) {
     const [formData, setFormData] = useState({
         name: '',
         price: '',
@@ -14,7 +14,23 @@ function CreateTour({ title, url, onSuccess }) {
     });
     const [imgPreview, setImgPreview] = useState('');
     const { token } = useAuth();
-    const { createTour, isUploading, error: createError, success: createSuccess } = useCreateTour(url);
+    const { editData, loading: isEditing, error: editError, success: editSuccess } = useEditData(`${url}`, tourData.id, token);
+
+    // Initialize form with existing tour data
+    useEffect(() => {
+        if (tourData) {
+            setFormData({
+                name: tourData.name || '',
+                price: tourData.price || '',
+                category: tourData.category || '',
+                description: tourData.description || '',
+                imageUrl: tourData.imageUrl || '',
+            });
+            if (tourData.imageUrl) {
+                setImgPreview(`https://tripwayholidays.in//tour-image/${tourData.imageUrl}`);
+            }
+        }
+    }, [tourData]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -33,9 +49,9 @@ function CreateTour({ title, url, onSuccess }) {
         e.preventDefault();
         if (!formData.imageUrl) return alert("Please upload an image.");
 
-        await createTour(formData);
+        await editData(formData);
 
-        if (createSuccess) {
+        if (editSuccess) {
             resetForm();
             if (onSuccess) onSuccess();
         }
@@ -85,16 +101,16 @@ function CreateTour({ title, url, onSuccess }) {
             </div>
             <button
                 type="submit"
-                disabled={isUploading}
+                disabled={isEditing}
                 className={style.loginbutton}
             >
-                {isUploading ? 'Processing...' : `Create ${title}`}
+                {isEditing ? 'Processing...' : `Update ${title}`}
             </button>
 
-            {createError && <p style={{ color: "red" }}>{createError}</p>}
-            {createSuccess && <p style={{ color: "green" }}>Tour created successfully!</p>}
+            {editError && <p style={{ color: "red" }}>{editError}</p>}
+            {editSuccess && <p style={{ color: "green" }}>Tour updated successfully!</p>}
         </form>
     );
 }
 
-export default CreateTour;
+export default EditTour;
