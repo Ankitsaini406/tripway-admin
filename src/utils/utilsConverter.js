@@ -12,6 +12,12 @@ export const formatDate = (timestamp) => {
     return timestamp;
 };
 
+export const formatDate2 = (date) => {
+    if (!date) return "N/A";
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    return new Intl.DateTimeFormat("en-US", options).format(date);
+};
+
 export const formatTime = (time) => {
     if (!time) return "N/A";
 
@@ -29,7 +35,7 @@ export const formatPrice = (price) => {
     }).format(price);
 };
 
-export const truncateDescription = (description, maxLength = 200) => {
+export const truncateDescription = (description, maxLength = 100) => {
     if (!description) return "";
     return description.length > maxLength
         ? `${description.slice(0, maxLength)}...`

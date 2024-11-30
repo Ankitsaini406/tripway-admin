@@ -87,6 +87,7 @@ const useTourData = (token) => {
                 category: tourData.category,
                 description: tourData.description,
                 imageUrl: tourData.imageUrl,
+                startDate: tourData.startDate,
             };
 
             const response = await fetch(`http://localhost:3000/api/${url}`, {

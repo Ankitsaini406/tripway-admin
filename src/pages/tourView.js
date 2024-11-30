@@ -3,8 +3,8 @@ import useAuth from "@/hook/useAuth";
 import Modal from "@/utils/Modal";
 import CreateTour from "@/components/CreateTours";
 import { toast } from "react-toastify";
-import LazyLoadImage from "@/utils/lazyImageLoading";
-import { formatPrice, truncateDescription } from "@/utils/utilsConverter";
+// import LazyLoadImage from "@/utils/lazyImageLoading";
+import { formatDate, formatPrice, truncateDescription } from "@/utils/utilsConverter";
 import EditTour from "@/components/EditTours";
 import useTourData from "@/hook/useTourData";
 
@@ -75,7 +75,8 @@ function TourView() {
                             <th>Name</th>
                             <th>Category</th>
                             <th>Price</th>
-                            <th>Image</th>
+                            <th>Tour Date</th>
+                            {/* <th>Image</th> */}
                             <th>Description</th>
                             <th>Action</th>
                         </tr>
@@ -86,7 +87,8 @@ function TourView() {
                                 <td>{tours[uid].name}</td>
                                 <td>{tours[uid].category}</td>
                                 <td>{formatPrice(tours[uid].price)}</td>
-                                <td style={{ width: '100px', height: '100px' }}><LazyLoadImage src={`https://tripwayholidays.in//tour-image/${tours[uid].imageUrl}`} alt={tours[uid].imageUrl} /></td>
+                                <td>{formatDate(tours[uid].startDate)}</td>
+                                {/* <td style={{ width: '100px', height: '100px' }}><LazyLoadImage src={`https://tripwayholidays.in//tour-image/${tours[uid].imageUrl}`} alt={tours[uid].imageUrl} /></td> */}
                                 <td style={{ maxWidth: '200px' }}>{truncateDescription(tours[uid].description)}</td>
                                 <td style={{ display: 'flex', border: 'none', borderTop: '1px solid #ddd' }}>
                                     <button

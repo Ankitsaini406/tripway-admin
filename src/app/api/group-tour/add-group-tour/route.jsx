@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
     try {
         // Parse the request body
-        const { name, price, category, description, imageUrl } = await req.json();
+        const { name, price, category, description, imageUrl, startDate } = await req.json();
 
         // Get reference to the Firestore collection 'tours'
         const tourRef = collection(firestore, "group-tours");
@@ -17,6 +17,7 @@ export async function POST(req) {
             category,
             description,
             imageUrl,
+            startDate,
         };
 
         // Add the tour data to Firestore

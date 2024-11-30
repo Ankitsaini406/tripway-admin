@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import style from "../styles/auth.module.css";
 import useAuth from "@/hook/useAuth";
 import Image from "next/image";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import useTourData from "@/hook/useTourData";
+import style from "../styles/auth.module.css";
 
 function CreateTour({ title, url, onSuccess }) {
     const [formData, setFormData] = useState({
@@ -11,6 +13,7 @@ function CreateTour({ title, url, onSuccess }) {
         category: "",
         description: "",
         imageUrl: "",
+        startDate: null,
     });
     const [imgPreview, setImgPreview] = useState("");
     const { token } = useAuth();
@@ -33,7 +36,20 @@ function CreateTour({ title, url, onSuccess }) {
         e.preventDefault();
         if (!formData.imageUrl) return alert("Please upload an image.");
 
-        await createTour(url, formData);
+        const formattedDate = formData.startDate
+            ? new Intl.DateTimeFormat("en-GB", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+            }).format(formData.startDate).replace(/\s/g, "-")
+            : null;
+
+        const dataToSend = {
+            ...formData,
+            startDate: formattedDate, // Format the date before sending
+        };
+
+        await createTour(url, dataToSend);
         if (success) {
             resetForm();
             if (success) onSuccess();
@@ -47,6 +63,7 @@ function CreateTour({ title, url, onSuccess }) {
             category: "",
             description: "",
             imageUrl: "",
+            startDate: null,
         });
         setImgPreview("");
     };
@@ -66,6 +83,13 @@ function CreateTour({ title, url, onSuccess }) {
                     />
                 </div>
             ))}
+            <DatePicker
+                selected={formData.startDate}
+                onChange={(date) => setFormData((prevData) => ({ ...prevData, startDate: date }))}
+                className={`${style.authinput} ${style.datepicker}`}
+                placeholderText="Start Date"
+                required
+            />
             <div className={style.formgroup}>
                 <label>Description</label>
                 <textarea

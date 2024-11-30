@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import style from '../styles/auth.module.css';
 import useAuth from "@/hook/useAuth";
 import Image from "next/image";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import useTourData from "@/hook/useTourData";
 
 function EditTour({ title, url, tourData, onSuccess }) {
@@ -11,10 +13,11 @@ function EditTour({ title, url, tourData, onSuccess }) {
         category: '',
         description: '',
         imageUrl: '',
+        startDate: null,
     });
     const [imgPreview, setImgPreview] = useState('');
     const { token } = useAuth();
-    const { editTour, loading, error, success} = useTourData(token);
+    const { editTour, loading, error, success } = useTourData(token);
 
     // Initialize form with existing tour data
     useEffect(() => {
@@ -25,6 +28,7 @@ function EditTour({ title, url, tourData, onSuccess }) {
                 category: tourData.category || '',
                 description: tourData.description || '',
                 imageUrl: tourData.imageUrl || '',
+                startDate: tourData.startDate || null,
             });
             if (tourData.imageUrl) {
                 setImgPreview(`https://tripwayholidays.in//tour-image/${tourData.imageUrl}`);
@@ -64,6 +68,7 @@ function EditTour({ title, url, tourData, onSuccess }) {
             category: '',
             description: '',
             imageUrl: '',
+            startDate: null,
         });
         setImgPreview('');
     };
@@ -83,6 +88,13 @@ function EditTour({ title, url, tourData, onSuccess }) {
                     />
                 </div>
             ))}
+            <DatePicker
+                selected={formData.startDate}
+                onChange={(date) => setFormData((prevData) => ({ ...prevData, startDate: date }))}
+                className={`${style.authinput} ${style.datepicker}`}
+                placeholderText="Start Date"
+                required
+            />
             <div className={style.formgroup}>
                 <label>Description</label>
                 <textarea
