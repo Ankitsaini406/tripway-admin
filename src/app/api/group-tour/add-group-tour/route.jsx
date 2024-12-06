@@ -1,16 +1,20 @@
 import { firestore } from "@/firebase/firebaseConfig"; // Ensure the correct db import
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, snapshotEqual } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
     try {
         // Parse the request body
-        const { name, price, category, description, imageUrl, startDate } = await req.json();
+        const { name, price, category, description, imageUrl, startDate, exclusions, inclusions, itinerary } = await req.json();
 
-        // Get reference to the Firestore collection 'tours'
-        const tourRef = collection(firestore, "group-tours");
+        const sanitizedItinerary = Array.isArray(itinerary)
+            ? itinerary.map((item) => ({
+                title: item.title || "Untitled",
+                description: item.description || "No description provided",
+                activities: Array.isArray(item.activities) ? item.activities.filter(Boolean) : [],
+            }))
+            : [];
 
-        // Prepare tour data
         const tourData = {
             name,
             price,
@@ -18,9 +22,12 @@ export async function POST(req) {
             description,
             imageUrl,
             startDate,
+            exclusions,
+            inclusions,
+            itinerary: sanitizedItinerary,
         };
-
-        // Add the tour data to Firestore
+        
+        const tourRef = collection(firestore, "group-tours");
         await addDoc(tourRef, tourData);
 
         return new NextResponse(JSON.stringify({ message: "Tour created successfully!" }), {

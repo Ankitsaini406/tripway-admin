@@ -81,18 +81,20 @@ const useTourData = (token) => {
                 throw new Error("Token is missing.");
             }
 
-            const tourDataToSave = {
-                name: tourData.name,
-                price: tourData.price,
-                category: tourData.category,
-                description: tourData.description,
-                imageUrl: tourData.imageUrl,
-                startDate: tourData.startDate,
+            const sanitizedData = {
+                ...tourData,
+                itinerary: Array.isArray(tourData.itinerary)
+                    ? tourData.itinerary.map((item) => ({
+                        title: item.title || "Untitled",
+                        description: item.description || "No description provided",
+                        activities: Array.isArray(item.activities) ? item.activities.filter(Boolean) : [],
+                    }))
+                    : [], // Default to an empty array if undefined or not an array
             };
 
             const response = await fetch(`http://localhost:3000/api/${url}`, {
                 method: "POST",
-                body: JSON.stringify(tourDataToSave),
+                body: JSON.stringify(sanitizedData),
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${storedToken}`,
