@@ -48,6 +48,9 @@ export async function PUT(req, context) {
             category: requestData.category,
             description: requestData.description,
             imageUrl: requestData.imageUrl,
+            exclusions: requestData.exclusions,
+            inclusions: requestData.inclusions,
+            itinerary: requestData.itinerary,
         });
 
         return NextResponse.json({ message: "Tour updated successfully" }, { status: 200 });
