@@ -57,7 +57,8 @@ export async function POST(req) {
         };
 
         const remotePath = `/public_html/tour-image/${file.name}`;
-        const fileUrl = `https://tripwayholidays.in/tour-image/${file.name}`;
+        const fileUrl = `${file.name}`;
+        // const fileUrl = `https://tripwayholidays.in/tour-image/${file.name}`;
 
         const tempFilePath = path.join(__dirname, `./${file.name}`);
 
@@ -89,7 +90,8 @@ export async function POST(req) {
             startDate,
             exclusions,
             inclusions,
-            itinerary: sanitizedItinerary
+            itinerary: sanitizedItinerary,
+            createdAt: new Date()
         };
 
         const tourRef = collection(firestore, "group-tours");
