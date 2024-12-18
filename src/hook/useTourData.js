@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { getCookie } from "cookies-next";
 
 const useTourData = (token) => {
@@ -7,29 +7,36 @@ const useTourData = (token) => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
 
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api";
+
+    const getToken = () => {
+        const storedToken = token || getCookie("token");
+        if (!storedToken) throw new Error("Token is missing.");
+        return storedToken;
+    };
+
+    const handleResponse = async (response) => {
+        if (!response.ok) {
+            const message = await response.text();
+            throw new Error(`Error: ${response.status} - ${message}`);
+        }
+        return response.json();
+    };
+
     const fetchTours = async (url) => {
         setLoading(true);
-        setTours(null);
         setError(null);
+        setSuccess(null);
         try {
-            const storedToken = token || getCookie("token");
-            if (!storedToken) {
-                throw new Error("Token is missing.");
-            }
-
-            const response = await fetch(`/api/${url}`, {
+            const storedToken = getToken();
+            const response = await fetch(`${API_BASE_URL}/${url}`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${storedToken}`,
                     "Content-Type": "application/json",
                 },
             });
-
-            if (!response.ok) {
-                throw new Error("Failed to fetch tours.");
-            }
-
-            const data = await response.json();
+            const data = await handleResponse(response);
             setTours(data);
         } catch (err) {
             setError(err.message);
@@ -42,24 +49,17 @@ const useTourData = (token) => {
     const deleteTour = async (url, tourId) => {
         setLoading(true);
         setError(null);
+        setSuccess(null);
         try {
-            const storedToken = token || getCookie("token");
-            if (!storedToken) {
-                throw new Error("Token is missing.");
-            }
-
-            const response = await fetch(`http://localhost:3000/api/${url}/${tourId}`, {
+            const storedToken = getToken();
+            const response = await fetch(`${API_BASE_URL}/${url}/${tourId}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${storedToken}`,
                     "Content-Type": "application/json",
                 },
             });
-
-            if (!response.ok) {
-                throw new Error("Failed to delete tour.");
-            }
-
+            await handleResponse(response);
             setTours((prevTours) => prevTours.filter((tour) => tour.id !== tourId));
             setSuccess("Tour deleted successfully.");
         } catch (err) {
@@ -70,44 +70,35 @@ const useTourData = (token) => {
         }
     };
 
-    const createTour = async (url, tourData) => {
+    const createTour = async (url, tourData, file) => {
         setLoading(true);
         setError(null);
         setSuccess(null);
-
+    
         try {
-            const storedToken = token || getCookie("token");
-            if (!storedToken) {
-                throw new Error("Token is missing.");
+            const storedToken = getToken();
+    
+            // Create FormData
+            const formData = new FormData();
+            formData.append("file", file); // Append the file
+            formData.append("metadata", JSON.stringify(tourData)); // Append metadata as JSON
+    
+            // Debugging: Log FormData content
+            for (let pair of formData.entries()) {
+                console.log(`${pair[0]}: ${pair[1]}`);
             }
-
-            const sanitizedData = {
-                ...tourData,
-                itinerary: Array.isArray(tourData.itinerary)
-                    ? tourData.itinerary.map((item) => ({
-                        title: item.title || "Untitled",
-                        description: item.description || "No description provided",
-                        activities: Array.isArray(item.activities) ? item.activities.filter(Boolean) : [],
-                    }))
-                    : [], // Default to an empty array if undefined or not an array
-            };
-
-            const response = await fetch(`http://localhost:3000/api/${url}`, {
+    
+            const response = await fetch(`${API_BASE_URL}/${url}`, {
                 method: "POST",
-                body: JSON.stringify(sanitizedData),
+                body: formData,
                 headers: {
-                    "Content-Type": "application/json",
                     Authorization: `Bearer ${storedToken}`,
                 },
             });
-
-            if (!response.ok) {
-                throw new Error("Failed to create tour.");
-            }
-
-            const newTour = await response.json();
-            setTours((prevTours) => [...prevTours, newTour]);
-            setSuccess("Tour created successfully.");
+    
+            const responseData = await handleResponse(response);
+            setTours((prevTours) => [...prevTours, responseData]);
+            setSuccess("Tour created successfully!");
         } catch (err) {
             setError(err.message);
             console.error("Error creating tour:", err);
@@ -120,27 +111,17 @@ const useTourData = (token) => {
         setLoading(true);
         setError(null);
         setSuccess(null);
-
         try {
-            const storedToken = token || getCookie("token");
-            if (!storedToken) {
-                throw new Error("Token is missing.");
-            }
-
-            const response = await fetch(`http://localhost:3000/api/${url}/${tourId}`, {
+            const storedToken = getToken();
+            const response = await fetch(`${API_BASE_URL}/${url}/${tourId}`, {
                 method: "PUT",
                 body: JSON.stringify(updatedData),
                 headers: {
-                    "Content-Type": "application/json",
                     Authorization: `Bearer ${storedToken}`,
+                    "Content-Type": "application/json",
                 },
             });
-
-            if (!response.ok) {
-                throw new Error("Failed to update tour.");
-            }
-
-            const updatedTour = await response.json();
+            const updatedTour = await handleResponse(response);
             setTours((prevTours) =>
                 prevTours.map((tour) => (tour.id === tourId ? updatedTour : tour))
             );
