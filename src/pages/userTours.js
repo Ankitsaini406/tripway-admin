@@ -33,7 +33,7 @@ function UserViewTour() {
                             <td>{userTours[uid].userEmail}</td>
                             <td>{userTours[uid].passenger}</td>
                             <td>{formatPrice(userTours[uid].passenger * userTours[uid].price)}</td>
-                            <td>{formatDate(userTours[uid].tourDate)}</td>
+                            <td>{formatDate(userTours[uid].startDate)}</td>
                         </tr>
                     ))}
                 </tbody>
