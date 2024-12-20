@@ -5,11 +5,11 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
     try {
         // Parse the request body
-        const { uid, name, email, phoneNumber, password, verifyPassword } = await req.json();
+        const { uid, name, email, phoneNumber, password, verifyPassword, address, isAgent } = await req.json();
 
         // Create a reference in the Firebase Realtime Database for the agent
-        const agentRef = ref(database, 'agents/' + uid);
-        await set(agentRef, { name, email, phoneNumber, password, verifyPassword, uid });
+        const agentRef = ref(database, 'users/' + uid);
+        await set(agentRef, { name, email, phoneNumber, password, verifyPassword, uid, isAgent, address });
 
         // Respond with success status and message
         return NextResponse.json({ message: 'Agent record saved successfully', agentId: uid }, { status: 201 });

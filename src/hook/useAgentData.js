@@ -16,7 +16,7 @@ const useAgentData = (token) => {
 
     // Add agent data
     const addData = async (personData) => {
-        const { name, email, phoneNumber, password, verifyPassword, agentCode } = personData;
+        const { name, email, phoneNumber, password, verifyPassword, agentCode, address } = personData;
         const clientToken = getClientToken();
         if (!clientToken) {
             console.error("Token is missing");
@@ -34,7 +34,7 @@ const useAgentData = (token) => {
             const user = userCredential.user;
 
             // Step 2: Add the user’s UID and other data to Firebase Realtime Database
-            const agentRef = ref(database, "agents/" + user.uid);
+            const agentRef = ref(database, "users/" + user.uid);
             await set(agentRef, {
                 name,
                 email,
@@ -43,6 +43,8 @@ const useAgentData = (token) => {
                 verifyPassword,
                 agentCode,
                 uid: user.uid,
+                isAgent: true,
+                address,
             });
 
             setResponse({ message: "Agent created and data saved successfully", agentId: user.uid });

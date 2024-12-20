@@ -1,4 +1,3 @@
-// src/app/api/agents/[id]/route.js
 
 import { ref, get, remove, update } from "firebase/database";
 import { database, auth } from "@/firebase/firebaseAdmin";
@@ -9,7 +8,7 @@ export async function GET(req, context) {
     const { id } = await context.params;
 
     try {
-        const agentRef = ref(database, `agents/${id}`);
+        const agentRef = ref(database, `users/${id}`);
         const snapshot = await get(agentRef);
 
         if (!snapshot.exists()) {
@@ -35,7 +34,7 @@ export async function PUT(req, context) {
     }
 
     try {
-        const agentRef = ref(database, `agents/${id}`);
+        const agentRef = ref(database, `users/${id}`);
         await update(agentRef, data);
 
         const updatedUser = await auth.updateUser(id, {
@@ -61,7 +60,7 @@ export async function DELETE(req, context) {
     const { id } = await context.params;
 
     try {
-        const agentRef = ref(database, `agents/${id}`);
+        const agentRef = ref(database, `users/${id}`);
         
         const snapshot = await get(agentRef);
         if (!snapshot.exists()) {

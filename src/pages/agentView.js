@@ -12,7 +12,7 @@ function AgentView() {
     const [editingAgent, setEditingAgent] = useState(null);
     const [refreshKey, setRefreshKey] = useState(0);
     const { token } = useAuth();
-    const { viewData, deleteData, data, loading, response, error } = useAgentData(token, 'agents/get', refreshKey);
+    const { viewData, deleteData, data, loading, response, error } = useAgentData(token, 'users/get', refreshKey);
 
     const handleOpenModal = () => {
         setIsModalOpen(true);

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import useAuth from "@/hook/useAuth";
-import useAuthorizedRequest from "@/hook/useAuthorizedRequest";
 import { MdOutlineVisibility, MdOutlineVisibilityOff } from "react-icons/md";
 import style from "../styles/auth.module.css";
 import useAgentData from "@/hook/useAgentData";
@@ -13,18 +12,17 @@ function CreatePerson({ title, url }) {
         password: "",
         verifyPassword: "",
         agentCode: "",
+        address: '',
     });
     const [showPassword, setShowPassword] = useState(false);
     const [showVerifyPassword, setShowVerifyPassword] = useState(false);
-    // const [error, setError] = useState("");
+    const [error, setError] = useState(""); // Fix: Reintroduce the error state
     const { token } = useAuth();
-    const { makeRequest } = useAuthorizedRequest();
-    const { addData, loading, error} = useAgentData(token);
-    // const { addData, loading } = useAddData(token, makeRequest);
+    const { addData, loading } = useAgentData(token); // Remove the unused `error` from useAgentData
 
     // Helper function to generate a 6-character alphanumeric code
     const generateAgentCode = () => {
-        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        const chars = `${formData.name}${formData.phoneNumber}${formData.email}${formData.address}`;
         let code = "";
         for (let i = 0; i < 6; i++) {
             code += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -39,11 +37,11 @@ function CreatePerson({ title, url }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError("");
+        setError(""); // Reset error before validation
 
-        const { name, phoneNumber, email, password, verifyPassword } = formData;
+        const { name, phoneNumber, email, password, verifyPassword, address } = formData;
 
-        if (!name || !phoneNumber || !email || !password) {
+        if (!name || !phoneNumber || !email || !password || !address) {
             setError("Please fill in all fields.");
             return;
         }
@@ -57,10 +55,10 @@ function CreatePerson({ title, url }) {
 
         try {
             await addData({ ...formData, agentCode }); // Include the agent code in the data
-            setFormData({ name: "", phoneNumber: "", email: "", password: "", verifyPassword: "" });
+            setFormData({ name: "", phoneNumber: "", email: "", password: "", verifyPassword: "", address: '' });
             alert(`${title} created successfully with code: ${agentCode}`);
         } catch (err) {
-            setError("Failed to create agent. Please try again.");
+            setError("Failed to create agent. Please try again."); // Set the error message
             console.error(err);
         }
     };
@@ -70,7 +68,7 @@ function CreatePerson({ title, url }) {
     return (
         <div>
             <form onSubmit={handleSubmit}>
-                {["name", "phoneNumber", "email"].map((field) => (
+                {["name", "phoneNumber", "email", "address"].map((field) => (
                     <div className={style.formgroup} key={field}>
                         <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
                         <input

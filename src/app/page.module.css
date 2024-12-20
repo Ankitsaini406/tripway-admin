@@ -3,23 +3,26 @@
   display: grid;
   grid-template-columns: 20rem 1fr;
   gap: 2rem;
-  height: 100svh;
+  height: 100vh;
+  align-items: start;
 }
 
 .sidebar {
   background-color: var(--mystic-blue);
   transition: width 0.3s ease;
   overflow: hidden;
-  /* height: 100svh; */
   position: sticky;
   top: 0;
-  /* max-height: 100svh; */
+  height: 100vh;
 }
 
 .silderlist {
   display: grid;
   gap: 2rem;
   padding-block: 2rem;
+  position: sticky;
+  top: 0;
+  left: 0;
 }
 
 .sliderli {
