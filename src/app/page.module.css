@@ -3,7 +3,6 @@
   display: grid;
   grid-template-columns: 20rem 1fr;
   gap: 2rem;
-  height: 100vh;
   align-items: start;
 }
 
@@ -13,6 +12,7 @@
   overflow: hidden;
   position: sticky;
   top: 0;
+  left: 0;
   height: 100vh;
 }
 
@@ -22,7 +22,6 @@
   padding-block: 2rem;
   position: sticky;
   top: 0;
-  left: 0;
 }
 
 .sliderli {
