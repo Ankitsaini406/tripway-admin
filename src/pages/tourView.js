@@ -15,6 +15,8 @@ function TourView() {
     const [refreshKey, setRefreshKey] = useState(0);
     const { token } = useAuth();
     const { tours, deleteTour, fetchTours } = useTourData(token);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filterTours, setFilteredTours] = useState([]);
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -46,9 +48,35 @@ function TourView() {
         }
     };
 
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        const filtered = Object.keys(tours).filter((uid) => {
+            const tour = tours[uid];
+            return (
+                tour.name.toLowerCase().includes(query.toLowerCase()) ||
+                tour.category.toLowerCase().includes(query.toLowerCase()) ||
+                tour.price.toString().includes(query.toLowerCase()) ||
+                tour.startDate.toString().includes(query.toLowerCase()) ||
+                tour.description.toLowerCase().includes(query.toLowerCase())
+            );
+        });
+
+        setFilteredTours(filtered.map((uid) => ({
+            id: uid,
+            ...tours[uid]
+        })));
+    };
+
     useEffect(() => {
         fetchTours('group-tour/get');
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        setFilteredTours(Object.keys(tours).map((uid) => ({
+            id: uid,
+            ...tours[uid]
+        })));
+    }, [tours]);
 
     return (
         <>
@@ -69,47 +97,60 @@ function TourView() {
             </Modal>
 
             {tours ? (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Tour Date</th>
-                            {/* <th>Image</th> */}
-                            <th>Description</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {Object.keys(tours).map((uid) => { 
-                            const isFutureBooking = new Date(formatTimestamp(tours[uid].startDate)) < new Date().setHours(0, 0, 0, 0);
-                            return (
-                            <tr key={uid} className={`${isFutureBooking ? 'disabledRow' : ''}`}>
-                                <td>{tours[uid].name}</td>
-                                <td>{tours[uid].category}</td>
-                                <td>{formatPrice(tours[uid].price)}</td>
-                                <td style={{ backgroundColor: isFutureBooking ? '#F0EFF5' : '' }}>{formatDate(tours[uid].startDate)}</td>
-                                {/* <td style={{ width: '100px', height: '100px' }}><LazyLoadImage src={`https://tripwayholidays.in//tour-image/${tours[uid].imageUrl}`} alt={tours[uid].imageUrl} /></td> */}
-                                <td style={{ maxWidth: '200px' }}>{truncateDescription(tours[uid].description)}</td>
-                                <td style={{ display: 'flex', border: 'none', borderTop: '1px solid #ddd' }}>
-                                    <button
-                                        onClick={() => handleOpenEditModal(uid)}
-                                        className={`editbtn tablebutton`}
-                                    >
-                                        Edit
-                                    </button>
-                                    <button
-                                        onClick={() => handleDeleteAgent(tours[uid].id)}
-                                        className={`deletebtn tablebutton`}
-                                    >
-                                        Delete
-                                    </button>
-                                </td>
+                <div>
+                    <input
+                        className='searchBar'
+                        value={searchQuery}
+                        onChange={(e) => handleSearch(e.target.value)}
+                        placeholder="Search here..."
+                    />
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Tour Date</th>
+                                {/* <th>Image</th> */}
+                                <th>Description</th>
+                                <th>Action</th>
                             </tr>
-                        )})}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            { filterTours.length > 0 ? (filterTours.map((tour) => {
+                                const isFutureBooking = new Date(formatTimestamp(tour.startDate)) < new Date().setHours(0, 0, 0, 0);
+                                return (
+                                    <tr key={tour.name} className={`${isFutureBooking ? 'disabledRow' : ''}`}>
+                                        <td>{tour.name}</td>
+                                        <td>{tour.category}</td>
+                                        <td>{formatPrice(tour.price)}</td>
+                                        <td style={{ backgroundColor: isFutureBooking ? '#F0EFF5' : '' }}>{formatDate(tour.startDate)}</td>
+                                        {/* <td style={{ width: '100px', height: '100px' }}><LazyLoadImage src={`https://tripwayholidays.in//tour-image/${tours[uid].imageUrl}`} alt={tours[uid].imageUrl} /></td> */}
+                                        <td style={{ maxWidth: '200px' }}>{truncateDescription(tour.description)}</td>
+                                        <td style={{ display: 'flex', border: 'none', borderTop: '1px solid #ddd' }}>
+                                            <button
+                                                onClick={() => handleOpenEditModal(uid)}
+                                                className={`editbtn tablebutton`}
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeleteAgent(tour.id)}
+                                                className={`deletebtn tablebutton`}
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                )
+                            })): (
+                                <tr>
+                                    <td colSpan="6">No Tour found.</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             ) : (
                 <p>Data Loading ...</p>
             )}

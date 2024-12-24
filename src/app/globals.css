@@ -125,7 +125,16 @@ th {
   /* Prevent interaction */
   opacity: 0.6;
   /* Dim the row */
-} 
+}
+
+.searchBar {
+  display: flex;
+  padding: 0.5rem;
+  border: 1px solid var(--indigo-blue);
+  outline: none;
+  margin: 1rem 0 0 0;
+  width: 25%;
+}
 
 .tablebutton {
   margin-right: 10px;
