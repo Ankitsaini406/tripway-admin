@@ -25,6 +25,7 @@ export async function POST(req) {
             name,
             price,
             category,
+            pickuppoints,
             description,
             startDate,
             exclusions,
@@ -85,6 +86,7 @@ export async function POST(req) {
             name,
             price,
             category,
+            pickuppoints,
             description,
             imageUrl: fileUrl,
             startDate,
@@ -93,6 +95,8 @@ export async function POST(req) {
             itinerary: sanitizedItinerary,
             createdAt: new Date()
         };
+
+        console.log("Tour data:", tourData);
 
         const tourRef = collection(firestore, "group-tours");
         await addDoc(tourRef, tourData);

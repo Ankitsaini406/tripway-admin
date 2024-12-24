@@ -12,6 +12,7 @@ function CreateTour({ title, url, onSuccess }) {
         name: "",
         price: "",
         category: "",
+        pickuppoints: "",
         description: "",
         image: null,
         startDate: null,
@@ -117,7 +118,7 @@ function CreateTour({ title, url, onSuccess }) {
     return (
         <form onSubmit={handleSubmit}>
             <div>
-                {["name", "price", "category"].map((field) => (
+                {["name", "price", "category", "pickuppoints"].map((field) => (
                     <div key={field} className={style.formgroup}>
                         <label>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
                         <input

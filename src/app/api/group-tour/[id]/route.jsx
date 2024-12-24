@@ -46,6 +46,7 @@ export async function PUT(req, context) {
             name: requestData.name,
             price: requestData.price,
             category: requestData.category,
+            pickuppoints: requestData.pickuppoints,
             description: requestData.description,
             imageUrl: requestData.imageUrl,
             exclusions: requestData.exclusions,

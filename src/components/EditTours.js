@@ -12,6 +12,7 @@ function EditTour({ title, url, tourData, onSuccess }) {
         name: '',
         price: '',
         category: '',
+        pickuppoints: '',
         description: '',
         imageUrl: '',
         startDate: null,
@@ -30,6 +31,7 @@ function EditTour({ title, url, tourData, onSuccess }) {
                 name: tourData.name || '',
                 price: tourData.price || '',
                 category: tourData.category || '',
+                pickuppoints: tourData.pickuppoints || '',
                 description: tourData.description || '',
                 imageUrl: tourData.imageUrl || '',
                 startDate: tourData.startDate || null,
@@ -113,6 +115,7 @@ function EditTour({ title, url, tourData, onSuccess }) {
             name: '',
             price: '',
             category: '',
+            pickuppoints: '',
             description: '',
             imageUrl: '',
             startDate: null,
@@ -126,7 +129,7 @@ function EditTour({ title, url, tourData, onSuccess }) {
     return (
         <form onSubmit={handleSubmit}>
             <div>
-                {['name', 'price', 'category'].map((field) => (
+                {['name', 'price', 'category', 'pickuppoints'].map((field) => (
                     <div key={field} className={style.formgroup}>
                         <label>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
                         <input
