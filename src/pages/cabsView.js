@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import useCabsData from "@/hook/useCabData";
-import { toast } from "react-toastify";
 import { formatDate, formatTime } from "@/utils/utilsConverter";
 
 const sectionHeaders = {
@@ -12,12 +11,36 @@ const sectionHeaders = {
 function CabsView() {
     const [refreshKey, setRefreshKey] = useState(0);
     const [selectedSection, setSelectedSection] = useState("one-way");
+    const [searchQuery, setSearchQuery] = useState("");
 
     const { data, loading, error } = useCabsData(selectedSection, refreshKey);
 
-    const renderRow = (uid) => {
+    // Filtered Data
+    const filteredData = Object.keys(data || {}).filter((uid) => {
         const cab = data[uid];
         const destination = Array.isArray(cab?.destination) ? cab.destination.join(", ") : cab?.destination || "N/A";
+
+        const valuesToSearch = [
+            cab.from,
+            cab.to,
+            cab.email,
+            cab.passenger?.toString(),
+            cab.phoneNumber,
+            cab.carOption,
+            formatDate(cab.startDate),
+            formatTime(cab.time),
+            cab.offerFrom,
+            destination,
+        ];
+
+        return valuesToSearch.some((value) =>
+            value?.toString().toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    });
+
+    const renderRow = (uid) => {
+        const cab = data[uid];
+        const destination = Array.isArray(cab.destinations) ? cab.destinations.join(", ") : cab.destination || "N/A";
 
         const sectionData = {
             "one-way": [
@@ -59,7 +82,7 @@ function CabsView() {
                     <td key={index}>{typeof value === "object" ? JSON.stringify(value) : value}</td>
                 ))}
                 <td style={{ display: "flex" }}>
-                    <button onClick={() => console.log("Edit", uid)} className="editbtn tablebutton">Panding</button>
+                    <button onClick={() => console.log("Edit", uid)} className="editbtn tablebutton">Pending</button>
                 </td>
             </tr>
         );
@@ -68,7 +91,7 @@ function CabsView() {
     return (
         <>
             {/* Section selection buttons */}
-            <div style={{ marginBottom: "20px" }}>
+            <div>
                 {["one-way", "round-trip", "multi-city"].map((section) => (
                     <button
                         key={section}
@@ -79,6 +102,15 @@ function CabsView() {
                     </button>
                 ))}
             </div>
+
+            {/* Search Bar */}
+                <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search here..."
+                    className="searchBar"
+                />
 
             {/* Data Display */}
             {loading ? (
@@ -95,7 +127,15 @@ function CabsView() {
                             <th>Status</th>
                         </tr>
                     </thead>
-                    <tbody>{Object.keys(data).map(renderRow)}</tbody>
+                    <tbody>
+                        {filteredData.length > 0 ? (
+                            filteredData.map(renderRow)
+                        ) : (
+                            <tr>
+                                <td colSpan={sectionHeaders[selectedSection].length + 1}>No data found.</td>
+                            </tr>
+                        )}
+                    </tbody>
                 </table>
             )}
         </>

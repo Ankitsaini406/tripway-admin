@@ -11,6 +11,7 @@ function AgentView() {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingAgent, setEditingAgent] = useState(null);
     const [refreshKey, setRefreshKey] = useState(0);
+    const [searchQuery, setSearchQuery] = useState("");
     const { token } = useAuth();
     const { viewData, deleteData, data, loading, response, error } = useAgentData(token, 'users/get', refreshKey);
 
@@ -35,7 +36,6 @@ function AgentView() {
 
     const handleDeleteAgent = async (uid) => {
         try {
-            // await deleteData(uid);
             await deleteData(`/agents/${uid}`);
             toast.info(response?.message || "Agent deleted successfully");
             setRefreshKey((prevKey) => prevKey + 1);
@@ -47,17 +47,31 @@ function AgentView() {
 
     useEffect(() => {
         viewData('agents/get');
-    }, [viewData])
+    }, [viewData]);
+
+    const filteredData = Object.keys(data || {}).filter((uid) => {
+        const agent = data[uid];
+        const valuesToSearch = [
+            agent.name,
+            agent.email,
+            agent.phoneNumber?.toString(),
+            agent.agentCode,
+        ];
+        return valuesToSearch.some((value) =>
+            value?.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    });
 
     if (loading) return <p>Loading...</p>;
-    // if (error) return <p>Error: {error.message}</p>;
 
     return (
-        <>
+        <div>
             <button onClick={handleOpenModal}>Create Agent</button>
+
             <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
                 <CreatePerson title={'Agent'} url={'agents/add-agent'} />
             </Modal>
+
             <Modal isOpen={isEditModalOpen} onClose={handleCloseEditModal}>
                 {editingAgent && (
                     <EditPersonData
@@ -67,46 +81,62 @@ function AgentView() {
                     />
                 )}
             </Modal>
-            {data && !error ? (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Agent Code</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {Object.keys(data).map((uid) => (
-                            <tr key={uid}>
-                                <td>{data[uid].name}</td>
-                                <td>{data[uid].email}</td>
-                                <td>{data[uid].phoneNumber}</td>
-                                <td>{data[uid].agentCode}</td>
-                                <td>
-                                    <button
-                                        onClick={() => handleOpenEditModal(uid)}
-                                        className={`editbtn tablebutton`}
-                                    >
-                                        Edit
-                                    </button>
-                                    <button
-                                        onClick={() => handleDeleteAgent(uid)}
-                                        className={`deletebtn tablebutton`}
-                                    >
-                                        Delete
-                                    </button>
-                                </td>
+
+            {data ? (
+                <div>
+                    <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search here..."
+                        className="searchBar"
+                    />
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Agent Code</th>
+                                <th>Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {filteredData.length > 0 ? (
+                                filteredData.map((uid) => (
+                                    <tr key={uid}>
+                                        <td>{data[uid].name}</td>
+                                        <td>{data[uid].email}</td>
+                                        <td>{data[uid].phoneNumber}</td>
+                                        <td>{data[uid].agentCode}</td>
+                                        <td>
+                                            <button
+                                                onClick={() => handleOpenEditModal(uid)}
+                                                className="editbtn tablebutton"
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeleteAgent(uid)}
+                                                className="deletebtn tablebutton"
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="5">No agents found.</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             ) : (
                 <p>{error}</p>
             )}
-        </>
+        </div>
     );
 }
 
