@@ -70,3 +70,13 @@
 .silder-list span {
   color: var(--white-color);
 }
+
+.dashboardpage {
+  overflow-y: scroll;
+}
+
+@media screen and (max-width: 770px) {
+  .adminpage {
+    grid-template-columns: 15rem 1fr;
+  }
+}

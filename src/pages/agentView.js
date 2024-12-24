@@ -66,7 +66,7 @@ function AgentView() {
 
     return (
         <div>
-            <button onClick={handleOpenModal}>Create Agent</button>
+            <button className="createButton" onClick={handleOpenModal}>Create Agent</button>
 
             <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
                 <CreatePerson title={'Agent'} url={'agents/add-agent'} />

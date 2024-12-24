@@ -26,8 +26,9 @@ function TourView() {
         setIsModalOpen(false);
     };
 
-    const handleOpenEditModal = (uid) => {
-        const tourToEdit = tours[uid];
+    const handleOpenEditModal = (tour) => {
+        const tourToEdit = tour;
+        console.log(`This is tour : `, tour);
         setEditingTour(tourToEdit);
         setIsEditModalOpen(true);
     };
@@ -80,7 +81,7 @@ function TourView() {
 
     return (
         <>
-            <button onClick={handleOpenModal}>Create Group Tour</button>
+            <button className="createButton" onClick={handleOpenModal}>Create Group Tour</button>
             <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
                 <CreateTour title='Group Tour' url='group-tour/add-group-tour' onSuccess={refreshKey} />
             </Modal>
@@ -129,7 +130,7 @@ function TourView() {
                                         <td style={{ maxWidth: '200px' }}>{truncateDescription(tour.description)}</td>
                                         <td style={{ display: 'flex', border: 'none', borderTop: '1px solid #ddd' }}>
                                             <button
-                                                onClick={() => handleOpenEditModal(uid)}
+                                                onClick={() => handleOpenEditModal(tour)}
                                                 className={`editbtn tablebutton`}
                                             >
                                                 Edit

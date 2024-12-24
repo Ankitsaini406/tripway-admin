@@ -91,12 +91,11 @@ function CabsView() {
     return (
         <>
             {/* Section selection buttons */}
-            <div>
+            <div className="sectionButtons">
                 {["one-way", "round-trip", "multi-city"].map((section) => (
                     <button
                         key={section}
                         onClick={() => setSelectedSection(section)}
-                        style={{ marginRight: "10px" }}
                     >
                         {section.replace("-", " ")}
                     </button>
