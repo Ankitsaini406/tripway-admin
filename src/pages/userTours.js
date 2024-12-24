@@ -1,6 +1,6 @@
 import React from "react";
 import useTourUserData from "@/hook/useTourUserData";
-import { formatDate, formatPrice } from "@/utils/utilsConverter";
+import { formatDate, formatPrice, formatTimestamp } from "@/utils/utilsConverter";
 
 function UserViewTour() {
 
@@ -24,8 +24,10 @@ function UserViewTour() {
                     </tr>
                 </thead>
                 <tbody>
-                    {Object.keys(userTours).map((uid) => (
-                        <tr key={uid}>
+                    {Object.keys(userTours).map((uid) => { 
+                        const isFutureBooking = new Date(formatTimestamp(userTours[uid].startDate)) < new Date().setHours(0, 0, 0, 0);
+                        return (
+                        <tr key={uid} className={`${isFutureBooking ? 'disabledRow' : ''}`}>
                             <td>{userTours[uid].tourName}</td>
                             <td>{userTours[uid].userName}</td>
                             <td>{userTours[uid].userFrom}</td>
@@ -33,9 +35,9 @@ function UserViewTour() {
                             <td>{userTours[uid].userEmail}</td>
                             <td>{userTours[uid].passenger}</td>
                             <td>{formatPrice(userTours[uid].passenger * userTours[uid].price)}</td>
-                            <td>{formatDate(userTours[uid].startDate)}</td>
+                            <td style={{ backgroundColor: isFutureBooking ? '#F0EFF5' : '' }}>{formatDate(userTours[uid].startDate)}</td>
                         </tr>
-                    ))}
+                    )})}
                 </tbody>
             </table>
             ) : loading ? (

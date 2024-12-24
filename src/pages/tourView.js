@@ -4,7 +4,7 @@ import Modal from "@/utils/Modal";
 import CreateTour from "@/components/CreateTours";
 import { toast } from "react-toastify";
 // import LazyLoadImage from "@/utils/lazyImageLoading";
-import { formatDate, formatPrice, truncateDescription } from "@/utils/utilsConverter";
+import { formatDate, formatPrice, formatTimestamp, truncateDescription } from "@/utils/utilsConverter";
 import EditTour from "@/components/EditTours";
 import useTourData from "@/hook/useTourData";
 
@@ -82,12 +82,14 @@ function TourView() {
                         </tr>
                     </thead>
                     <tbody>
-                        {Object.keys(tours).map((uid) => (
-                            <tr key={uid}>
+                        {Object.keys(tours).map((uid) => { 
+                            const isFutureBooking = new Date(formatTimestamp(tours[uid].startDate)) < new Date().setHours(0, 0, 0, 0);
+                            return (
+                            <tr key={uid} className={`${isFutureBooking ? 'disabledRow' : ''}`}>
                                 <td>{tours[uid].name}</td>
                                 <td>{tours[uid].category}</td>
                                 <td>{formatPrice(tours[uid].price)}</td>
-                                <td>{formatDate(tours[uid].startDate)}</td>
+                                <td style={{ backgroundColor: isFutureBooking ? '#F0EFF5' : '' }}>{formatDate(tours[uid].startDate)}</td>
                                 {/* <td style={{ width: '100px', height: '100px' }}><LazyLoadImage src={`https://tripwayholidays.in//tour-image/${tours[uid].imageUrl}`} alt={tours[uid].imageUrl} /></td> */}
                                 <td style={{ maxWidth: '200px' }}>{truncateDescription(tours[uid].description)}</td>
                                 <td style={{ display: 'flex', border: 'none', borderTop: '1px solid #ddd' }}>
@@ -105,7 +107,7 @@ function TourView() {
                                     </button>
                                 </td>
                             </tr>
-                        ))}
+                        )})}
                     </tbody>
                 </table>
             ) : (

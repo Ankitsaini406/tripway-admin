@@ -118,6 +118,15 @@ th {
   background-color: #f2f2f2;
 }
 
+.disabledRow {
+  background-color: var(--gray-flash);
+  color: var(--secondary-text);
+  pointer-events: none;
+  /* Prevent interaction */
+  opacity: 0.6;
+  /* Dim the row */
+} 
+
 .tablebutton {
   margin-right: 10px;
   padding: 5px 10px;

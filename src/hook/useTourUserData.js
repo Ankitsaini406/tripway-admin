@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getCookie } from "cookies-next";
 import { firestore } from "@/firebase/firebaseConfig"; // Firestore config import
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 
 const useTourUserData = () => {
     const [loading, setLoading] = useState(false);
@@ -23,7 +23,8 @@ const useTourUserData = () => {
 
                 // Firestore query
                 const toursRef = collection(firestore, "user-tours");
-                const querySnapshot = await getDocs(toursRef);
+                const tourQuery = query(toursRef, orderBy("startDate", "asc"));
+                const querySnapshot = await getDocs(tourQuery);
 
                 if (!querySnapshot.empty) {
                     const tours = [];
