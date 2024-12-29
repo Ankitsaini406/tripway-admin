@@ -23,6 +23,7 @@ export async function POST(req) {
 
         const {
             name,
+            slug,
             price,
             category,
             pickuppoints,
@@ -84,6 +85,7 @@ export async function POST(req) {
 
         const tourData = {
             name,
+            slug,
             price,
             category,
             pickuppoints,

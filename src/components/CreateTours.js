@@ -10,6 +10,7 @@ import style from "../styles/auth.module.css";
 function CreateTour({ title, url, onSuccess }) {
     const initialFormState = {
         name: "",
+        slug: "",
         price: "",
         category: "",
         pickuppoints: "",
@@ -61,6 +62,14 @@ function CreateTour({ title, url, onSuccess }) {
         }
     };
 
+    const generateSlug = (name) => {
+        return name
+            .toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, "")
+            .trim()
+            .replace(/\s+/g, "-");
+    };
+
     const [formData, dispatch] = useReducer(formReducer, initialFormState);
     const [imgPreview, setImgPreview] = useState("");
     const { token } = useAuth();
@@ -100,6 +109,7 @@ function CreateTour({ title, url, onSuccess }) {
             ...formData,
             startDate: formattedDate,
             itinerary: validatedItinerary,
+            slug: generateSlug(formData.name),
         };
     
         console.log("Metadata:", metadata);
