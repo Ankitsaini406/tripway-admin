@@ -10,6 +10,7 @@ import useTourData from "@/hook/useTourData";
 function EditTour({ title, url, tourData, onSuccess }) {
     const [formData, setFormData] = useState({
         name: '',
+        slug: '',
         price: '',
         category: '',
         pickuppoints: '',
@@ -29,6 +30,7 @@ function EditTour({ title, url, tourData, onSuccess }) {
         if (tourData) {
             setFormData({
                 name: tourData.name || '',
+                slug: tourData.slug || '',
                 price: tourData.price || '',
                 category: tourData.category || '',
                 pickuppoints: tourData.pickuppoints || '',
@@ -45,9 +47,23 @@ function EditTour({ title, url, tourData, onSuccess }) {
         }
     }, [tourData]);
 
+    const generateSlug = (name) => {
+        return name
+            .toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, "")
+            .trim()
+            .replace(/\s+/g, "-");
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prevData) => ({ ...prevData, [name]: value }));
+        setFormData((prevData) => {
+            const updatedData = { ...prevData, [name]: value };
+            if (name === 'name') {
+                updatedData.slug = generateSlug(value);
+            }
+            return updatedData;
+        });
     };
 
     const handleImageChange = (e) => {
@@ -102,6 +118,7 @@ function EditTour({ title, url, tourData, onSuccess }) {
         e.preventDefault();
         if (!formData.imageUrl) return alert("Please upload an image.");
 
+        // console.log(`Form Data : `, formData);
         await editTour(url, tourData.id, formData);
 
         if (success) {

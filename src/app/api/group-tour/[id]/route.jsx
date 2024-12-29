@@ -44,6 +44,7 @@ export async function PUT(req, context) {
 
         await updateDoc(tourRef, {
             name: requestData.name,
+            slug: requestData.slug,
             price: requestData.price,
             category: requestData.category,
             pickuppoints: requestData.pickuppoints,
