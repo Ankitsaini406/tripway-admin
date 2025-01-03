@@ -111,6 +111,7 @@ function TourView() {
                                 <th>Name</th>
                                 <th>Category</th>
                                 <th>Price</th>
+                                <th>Discount</th>
                                 <th>Tour Date</th>
                                 {/* <th>Image</th> */}
                                 <th>Description</th>
@@ -125,6 +126,7 @@ function TourView() {
                                         <td>{tour.name}</td>
                                         <td>{tour.category}</td>
                                         <td>{formatPrice(tour.price)}</td>
+                                        <td>{tour.discount}&nbsp;%off</td>
                                         <td style={{ backgroundColor: isFutureBooking ? '#F0EFF5' : '' }}>{formatDate(tour.startDate)}</td>
                                         {/* <td style={{ width: '100px', height: '100px' }}><LazyLoadImage src={`https://tripwayholidays.in//tour-image/${tours[uid].imageUrl}`} alt={tours[uid].imageUrl} /></td> */}
                                         <td style={{ maxWidth: '200px' }}>{truncateDescription(tour.description)}</td>

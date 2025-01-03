@@ -46,6 +46,7 @@ export async function PUT(req, context) {
             name: requestData.name,
             slug: requestData.slug,
             price: requestData.price,
+            discount: requestData.discount,
             category: requestData.category,
             pickuppoints: requestData.pickuppoints,
             description: requestData.description,
